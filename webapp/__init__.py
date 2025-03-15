@@ -6,7 +6,7 @@ from flask_migrate import Migrate  # Import Migrate
 from config import Config
 import sendgrid
 from sendgrid.helpers.mail import Mail, Email, To, Content
-
+import os 
 
 # Initialize the extensions
 db = SQLAlchemy()
@@ -22,6 +22,10 @@ def create_app():
     
     # Load the app configuration
     app.config.from_object(Config)
+
+    # Set the SQLALCHEMY_DATABASE_URI based on DATABASE_URL from environment
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'postgresql://localhost/stock_newsletter')
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # Initialize the extensions
     db.init_app(app)
