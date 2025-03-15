@@ -1,0 +1,24 @@
+# Ignore the .env file containing sensitive information
+.env
+
+# Ignore node_modules folder (if using Node.js)
+node_modules/
+
+# Ignore Python bytecode files
+*.pyc
+*.pyo
+
+# Ignore build directories
+dist/
+build/
+
+# Ignore IDE-specific files (e.g., VSCode, IntelliJ, etc.)
+.vscode/
+.idea/
+
+# Ignore log files
+*.log
+
+# Ignore OS-specific files (e.g., macOS, Windows)
+.DS_Store
+Thumbs.db

@@ -1,0 +1,29 @@
+{% block content %}
+    <h1>Subscribe to the Stock Market Newsletter</h1>
+    <button id="checkout-button">Pay Now</button>
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <script type="text/javascript">
+        var stripe = Stripe('pk_live_51R1aqqDy1cSJj1Ea3kzqlv6DglRr6b5WUAgNa40n3RsPgo9Mn5vXw7y1Ip2afjG9DClSWYfZpBoO8WqOhoRItBYL00BxfA5z5x');  // Replace with your Stripe public key
+        var checkoutButton = document.getElementById('checkout-button');
+
+        checkoutButton.addEventListener('click', function () {
+            var userId = '{{ current_user.id }}';  // Get the user id dynamically from Flask (logged-in user)
+
+            fetch('/create-checkout-session/' + userId, {
+                method: 'POST',
+            })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (session) {
+                if (session.id) {  // Check if the session ID is present
+                    stripe.redirectToCheckout({ sessionId: session.id });  // Use the session.id from the response
+                }
+            })
+            .catch(function (error) {
+                console.error("Error:", error);
+            });
+        });
+    </script>
+{% endblock %}

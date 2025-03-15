@@ -1,0 +1,299 @@
+prompt 1.0 - 
+"""
+    **Date & Time:** {formatted_time}  
+    **Market Status:** {market_status}  
+
+    Below are several stock market headlines and stats from major indices. Provide a **detailed market summary** that captures key movements, trends, and themes today. Identify any emerging patterns, major catalysts, and potential implications for investors.
+
+    - Identify which headlines are the most **consequential** based on potential market impact. Prioritize headlines with market-moving potential, such as rate decisions, key economic data (CPI, jobs reports), major earnings surprises, or geopolitical events. Minimize coverage of minor fluctuations unless they signal a broader trend.
+
+    Then, assess the **overall market sentiment** as **Bullish, Bearish, or Neutral**, explaining the reasoning behind it. If the sentiment is mixed, describe the conflicting signals.
+    
+    - Highlight any major **catalysts** that may influence the market today.
+
+    **Do not** list or analyze each headline separately—focus on a single, in-depth market summary.
+     
+    - Briefly summarize index performance, noting significant gains/losses and any standout movements (e.g., tech leading, small caps lagging, etc.). 
+
+    Headlines:
+    {market_analysis_text}
+
+    Indices:
+    {indices}
+
+    Sector Performance:
+    {sector_summary}
+
+    Structure:
+    ### Market Summary:
+
+    ### Key Movements and Trends:
+        Provide a numbered list (1, 2, 3, etc.) of the most important market trends observed today.
+        
+    ### Major Catalysts:
+        Identify the key drivers behind today's market moves. List them in a numbered format (1, 2, 3, etc.),
+    
+    ### Sector Performance:
+        Summarize which sectors outperformed and underperformed today. Identify any sector rotations or standout moves.
+        
+    ### Overall Market Sentiment:
+
+    ### Conclusion:
+
+    ### Indicies:
+     
+    """
+
+Prompt 2.0 - 
+
+**Date & Time:** {formatted_time}  
+    **Market Status:** {market_status}  
+
+    Below are several stock market headlines, key economic data, and stats from major indices. Provide a **detailed market summary** that synthesizes key movements, trends, and themes observed today. Focus on identifying **major catalysts** and **emerging patterns** that investors should be aware of, with **actionable insights**.
+
+    - **Prioritize consequential headlines**: Identify the headlines with the most significant **market impact**. Focus on high-impact events such as rate decisions, key economic data (CPI, jobs reports), major earnings surprises, or geopolitical events. 
+    - **Minimize coverage** of minor fluctuations unless they signal a **broader trend**. Provide in-depth analysis for the most impactful stories only.
+
+    Then, assess the **overall market sentiment** (Bullish, Bearish, or Neutral), explaining the reasoning behind it. If sentiment is mixed, highlight and explain the **conflicting signals** in the market.
+
+    **Do not** list or analyze each headline separately—focus on providing a **cohesive, in-depth market summary** that offers value for investors.
+
+    - Briefly summarize **index performance**, noting significant gains/losses and standout movements (e.g., tech leading, small caps lagging).
+
+    Headlines:
+    {market_analysis_text}
+
+    Indices:
+    {indices}
+
+    Sector Performance:
+    {sector_summary}
+
+    Structure:
+    ### Market Summary:
+        Provide a concise, cohesive overview of today's market activity, including the most important trends and major market-moving events. Focus on providing **insights** that can influence investor decision-making. Avoid jumping to conclusions, and instead, present data-driven analysis that reflects the **uncertainty** of the current market.
+
+    ### Key Movements and Trends:
+        1. **Identify the top 3 key trends** in the market today. Prioritize trends that signal significant shifts or patterns. **Explain why these trends matter** for investors and if they represent long-term shifts or short-term fluctuations.
+        2. **Explain the broader market context** around these trends and **discuss the potential risks** that could arise.
+
+    ### Major Catalysts:
+        Identify and describe the **top 3 catalysts** driving today's market movements. These could include macroeconomic data, earnings, or geopolitical events. Provide **insights into the potential market impact** of each catalyst.
+        - If applicable, discuss **multiple interpretations** of the catalyst’s impact on the market (e.g., "rate cuts could stimulate growth, but may also signal a potential economic slowdown").
+
+    ### Sector Performance:
+        Summarize sector performance, focusing on which sectors **outperformed** and which **underperformed**. Identify any **sector rotations** or standout moves. 
+        - For example, did **technology** outperform, or did **energy** take a hit? Are there signs of investors **rotating into defensive sectors**?
+        - Discuss any **uncertainty** or **potential risks** related to sector performance.
+
+    ### Overall Market Sentiment:
+        Provide a clear analysis of market sentiment: **Bullish**, **Bearish**, or **Neutral**. Explain the reasoning behind your sentiment assessment and **highlight any conflicting signals** or risks that investors should be aware of.
+
+    ### Conclusion:
+        **Summarize key takeaways** for investors, providing actionable insights or strategies based on the day’s market performance. Ensure that any recommendations are data-backed and include a **clear risk assessment**.
+
+    ### Indices:
+        Summarize the performance of major indices, including **significant gains or losses**. Mention any key movements within indices (e.g., tech leading, energy lagging). Be cautious in stating the **overall sentiment** and provide context where needed.
+    """
+
+get index data 1.0 - 
+    def get_index_snapshot():
+    snapshots = []
+    etf_info = {
+        'SPY': 'S&P 500 ETF (Represents the S&P 500 Index)',
+        'DIA': 'Dow Jones Industrial Average ETF (Represents the Dow Jones Industrial Average)',
+        'QQQ': 'Nasdaq-100 ETF (Represents the Nasdaq-100 Index)',
+        'IWM': 'Russell 2000 ETF (Represents the Russell 2000 Index)',
+        'IJH': 'S&P MidCap 400 ETF (Represents the S&P MidCap 400 Index)',
+        'VTI': 'Vanguard Total Stock Market ETF',
+        'VXX': 'iPath S&P 500 VIX Short-Term Futures ETF',
+        'XLK': 'Technology Select Sector SPDR Fund',
+        'XLF': 'Financial Select Sector SPDR Fund',
+        'XLE': 'Energy Select Sector SPDR Fund',
+        'XLV': 'Health Care Select Sector SPDR Fund',
+        'XLY': 'Consumer Discretionary Select Sector SPDR Fund',
+        'XLU': 'Utilities Select Sector SPDR Fund',
+        'XLRE': 'Real Estate Select Sector SPDR Fund',
+        'XLB': 'Materials Select Sector SPDR Fund'
+    }
+
+    for ticker, sector in etf_info.items():
+        try:
+            response = client.get_snapshot(ticker)
+
+            if not response or 'ticker' not in response:
+                print(f"Error: No valid data returned for {ticker}")
+                continue
+
+            # Get the current price from the response
+            current_price = response['ticker']['day']['c']
+
+            # Calculate the monthly change
+            start_date_month = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%d')
+            historical_data_month = client.get_aggregate_bars(
+                ticker, 
+                multiplier=1, 
+                timespan="day", 
+                from_date=start_date_month, 
+                to_date=datetime.now().strftime('%Y-%m-%d')
+            ).get('results', [])
+
+            # Calculate the monthly change
+            monthly_change = calculate_monthly_change(current_price, historical_data_month)
+
+            # Calculate average volume over the month
+            historical_volume = [item['v'] for item in historical_data_month]
+            average_volume = sum(historical_volume) / len(historical_volume) if historical_volume else 0
+
+            # Get current volume
+            current_volume = response['ticker']['day']['v']
+            volume_change_percentage = ((current_volume - average_volume) / average_volume) * 100 if average_volume else 0
+
+            snapshot_data = {
+                'Ticker': ticker,
+                'Sector/Decor': sector,
+                'Current Price': current_price,
+                'Change ($)': response['ticker']['todaysChange'],
+                'Change (%)': response['ticker']['todaysChangePerc'],
+                'High of the Day ($)': response['ticker']['day']['h'],
+                'Low of the Day ($)': response['ticker']['day']['l'],
+                'Volume': current_volume,
+                'Previous Close ($)': response['ticker']['prevDay']['c'],
+                'Monthly Change (%)': monthly_change,
+                'Volume Change (%)': volume_change_percentage
+            }
+
+            snapshots.append(snapshot_data)
+
+        except Exception as e:
+            print(f"Error fetching data for {ticker}: {e}")
+
+    # Convert snapshots into a DataFrame
+    df_snapshots = pd.DataFrame(snapshots)
+    return df_snapshots
+
+
+prompt 2.1 -- 
+
+    prompt = f"""
+    **Date & Time:** {formatted_time}  
+    **Market Status:** {market_status}  
+
+    Below are several stock market headlines, key economic data, and stats from major indices. Provide a **detailed market summary** that synthesizes key movements, trends, and themes observed today. Focus on identifying **major catalysts** and **emerging patterns** that investors should be aware of, with **actionable insights**.
+
+    - **Prioritize consequential headlines**: Identify the headlines with the most significant **market impact**. Focus on high-impact events such as rate decisions, key economic data (CPI, jobs reports), major earnings surprises, or geopolitical events. 
+    - **Minimize coverage** of minor fluctuations unless they signal a **broader trend**. Provide in-depth analysis for the most impactful stories only.
+
+    Then, assess the **overall market sentiment** (Bullish, Bearish, or Neutral), explaining the reasoning behind it. If sentiment is mixed, highlight and explain the **conflicting signals** in the market.
+
+    **Do not** list or analyze each headline separately—focus on providing a **cohesive, in-depth market summary** that offers value for investors.
+
+    - Briefly summarize **index performance**, noting significant gains/losses and standout movements (e.g., tech leading, small caps lagging).
+
+    Headlines:
+    {market_analysis_text}
+
+    Indices:
+    {indices}
+
+    Sector Performance:
+    {sector_summary}
+
+    Structure:
+    ### Market Summary:
+        Provide a concise, cohesive overview of today's market activity, including the most important trends and major market-moving events. Focus on providing **insights** that can influence investor decision-making. Avoid jumping to conclusions, and instead, present data-driven analysis that reflects the **uncertainty** of the current market.
+
+    ### Key Movements and Trends:
+        1. **Identify the top 3 key trends** in the market today. Prioritize trends that signal significant shifts or patterns. **Explain why these trends matter** for investors and if they represent long-term shifts or short-term fluctuations.
+        2. **Explain the broader market context** around these trends and **discuss the potential risks** that could arise.
+
+    ### Major Catalysts:
+        Identify and describe the **top 3 catalysts** driving today's market movements. These could include macroeconomic data, earnings, or geopolitical events. Provide **insights into the potential market impact** of each catalyst.
+        - If applicable, discuss **multiple interpretations** of the catalyst’s impact on the market (e.g., "rate cuts could stimulate growth, but may also signal a potential economic slowdown").
+
+    ### Sector Performance:
+        Summarize sector performance, focusing on which sectors **outperformed** and which **underperformed**. Identify any **sector rotations** or standout moves. 
+        - For example, did **technology** outperform, or did **energy** take a hit? Are there signs of investors **rotating into defensive sectors**?
+        - Discuss any **uncertainty** or **potential risks** related to sector performance.
+
+    ### Overall Market Sentiment:
+        Provide a clear analysis of market sentiment: **Bullish**, **Bearish**, or **Neutral**. Explain the reasoning behind your sentiment assessment and **highlight any conflicting signals** or risks that investors should be aware of.
+
+    ### Conclusion:
+        **Summarize key takeaways** for investors, providing actionable insights or strategies based on the day’s market performance. Ensure that any recommendations are data-backed and include a **clear risk assessment**.
+    
+    """
+
+prompt 2.2 -     prompt = f"""
+    **Date & Time:** {formatted_time}  
+    **Market Status:** {market_status}  
+
+    Below are key stock market updates, economic data, and major indices. Provide a **detailed market summary** that synthesizes key movements, trends, and themes today. Focus on identifying **major catalysts** and **emerging patterns** that investors should be aware of, with **actionable insights**.
+
+    ### Key Guidelines:
+    - **Use Data from Headlines and Descriptions**: Focus on the exact details mentioned in both the headlines and descriptions, such as percentage movements, earnings figures, or geopolitical events. Avoid overstatements unless the data is explicit.
+    - **Be Cautious with Speculation**: Ensure analysis is **fact-based**. Avoid speculating on future trends without clear data backing.
+    - **Multifaceted Sentiment Analysis**: Assess sentiment from **news articles**, **market performance**, and if applicable, **social media** or earnings calls. Ensure conclusions align with real-time data.
+
+    Updates:  
+    {market_analysis_text}
+
+    Indices:  
+    {indices}
+
+    Sector Performance:  
+    {sector_summary}
+
+    ### Market Summary:
+    Offer a **holistic synthesis** of today’s market activity using **multiple sources** (headlines, descriptions, economic data, sector performance, sentiment). Identify any **emerging patterns** that might not be obvious, comparing today’s data with **historical trends** or **long-term economic factors**. Focus on **actionable insights**.
+
+    - Look for **hidden correlations** across sectors. Are there **unexpected reactions** to headlines or descriptions (e.g., **positive earnings report** causing broader sector rally)?
+    - Identify **macro events** and **connect them to market trends** today.
+
+    ### Key Movements and Trends:
+    Identify the **most significant movements** in the market today, such as sector shifts or **major price changes**. Provide context by assessing whether these align with **long-term trends** or are likely **short-term fluctuations**.
+
+    - Analyze **sector rotations** or **emerging trends** (e.g., tech, energy, consumer goods).
+    - Discuss trends based on **real data** (earnings, price movements, sector performance) and **historical context**.
+    - Be specific: if a stock increased by 1%, state it clearly without using vague terms like "strong performance."
+
+    ### Major Catalysts:
+    Identify key catalysts (e.g., **economic reports**, **corporate earnings**, **geopolitical events**, or shifts in **market sentiment**). Focus on **data-backed catalysts** with measurable impacts on the market.
+
+    - Provide **context** for each catalyst (e.g., earnings performance or market response).
+    - If discussing **geopolitical events** or **economic reports**, clarify how they influence investor sentiment in the **short term** without generalizing long-term effects.
+
+    ### Sector Performance:
+    Summarize sector performance today, highlighting sectors that are **outperforming** or **underperforming**. Look for signs of **sector rotation** or **underappreciated opportunities** with **data-backed reasoning**.
+
+    - Example: **Did the energy sector outperform due to higher oil prices?**
+    - Provide **insight into sector sentiment** and how **investors can capitalize** on shifts, especially in **underperforming sectors**.
+
+    ### Overall Market Sentiment:
+    Provide an analysis of **market sentiment** (Bullish, Bearish, or Neutral), explaining why it’s shifting. Assess **contradictions** in sentiment between sectors and broader market movements.
+
+    - Example: **Is tech positive but other sectors cautious due to geopolitical concerns or inflation fears?**
+
+    ### Conclusion:
+    Provide **key takeaways** and actionable insights for investors. Highlight **unique opportunities** or strategies to focus on, backed by **data-supported** analysis and **risk assessments**.
+
+    - Example: **Consider diversifying into energy stocks, as they appear to be outperforming despite broader market uncertainty.**
+    """
+
+
+def format_etf_data(df_snapshots):
+    # Format the ETF data neatly for GPT-4 prompt
+    formatted_data = ""
+    for index, row in df_snapshots.iterrows():
+        formatted_data += f"**{row['Ticker']}** ({row['Sector/Decor']}):\n"
+        formatted_data += f" - Current Price: ${row['Current Price']}\n"
+        formatted_data += f" - Change: ${row['Change ($)']} ({row['Change (%)']}%)\n"
+        formatted_data += f" - High of the Day: ${row['High of the Day ($)']}\n"
+        formatted_data += f" - Low of the Day: ${row['Low of the Day ($)']}\n"
+        formatted_data += f" - Volume: {row['Volume']}\n"
+        formatted_data += f" - Previous Close: ${row['Previous Close ($)']}\n"
+        formatted_data += f" - Monthly Change: {row['Monthly Change (%)']}%\n"
+        formatted_data += f" - Volume Change: {row['Volume Change (%)']}%\n"
+        formatted_data += f" - 50-Day Moving Average: ${row['50-Day Moving Average'] if row['50-Day Moving Average'] else 'N/A'}\n"
+        formatted_data += "\n"  # Adds a blank line for readability
+    return formatted_data

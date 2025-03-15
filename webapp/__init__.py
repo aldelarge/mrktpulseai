@@ -1,0 +1,46 @@
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
+from flask_login import LoginManager
+from flask_migrate import Migrate  # Import Migrate
+from config import Config
+import sendgrid
+from sendgrid.helpers.mail import Mail, Email, To, Content
+
+
+# Initialize the extensions
+db = SQLAlchemy()
+bcrypt = Bcrypt()
+login_manager = LoginManager()
+migrate = Migrate()  # Initialize Migrate
+
+SENDGRID_API_KEY = Config.SENDGRID_API_KEY
+sg = sendgrid.SendGridAPIClient(api_key=SENDGRID_API_KEY)
+
+def create_app():
+    app = Flask(__name__)
+    
+    # Load the app configuration
+    app.config.from_object(Config)
+
+    # Initialize the extensions
+    db.init_app(app)
+    bcrypt.init_app(app)
+    login_manager.init_app(app)
+    migrate.init_app(app, db)  # Initialize Flask-Migrate
+
+    login_manager.login_view = 'routes.login'
+
+    # Import routes and models
+    from .routes import routes
+    from .models import User
+
+    # Register blueprints or routes
+    app.register_blueprint(routes)
+
+    # User loader for Flask-Login
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.get(int(user_id))
+
+    return app

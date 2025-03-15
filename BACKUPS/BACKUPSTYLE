@@ -1,0 +1,261 @@
+            body {
+                font-family: 'Exo 2', sans-serif;
+                padding-top: 60px;
+                padding-bottom: 60px;
+                background-color: #f8f9fa; 
+                position: relative;
+                overflow: auto; 
+            }
+
+            /* Hero Section Background */
+            .hero-section {
+                background: linear-gradient(135deg, #2a3d66, #00c8ff); /* Darker blue gradient */
+                padding: 120px 0;
+                border-radius: 8px;
+                position: relative;
+                color: white;
+                overflow: hidden; /* Ensure content doesn't get cut off by animation */
+            }
+
+            /* Background Animation (Subtle Moving Effect) */
+            .hero-section::before {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 400%;
+                height: 400%;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 50%;
+                animation: moveBackground 10s linear infinite; /* Slow, subtle movement */
+                z-index: -1; /* Keeps it behind the text */
+                transform: translate(-50%, -50%);
+            }
+
+            /* Animation for the moving background effect */
+            @keyframes moveBackground {
+                0% { transform: translate(-50%, -50%) rotate(0deg); }
+                100% { transform: translate(-50%, -50%) rotate(360deg); }
+            }
+
+            /* Hero Section Text Fade-In and Slide-Up Animation */
+            .hero-title, .hero-description {
+                animation: fadeInUp 1.5s ease-out;
+            }
+
+            .hero-title {
+                font-size: 3.5rem; /* Larger heading size */
+                font-weight: 700;
+                margin-bottom: 20px;
+            }
+
+            .hero-description {
+                font-size: 1.25rem;
+                font-weight: 300;
+                line-height: 1.6;
+                margin-bottom: 30px;
+            }
+
+            /* Smooth fade-up animation for content */
+            @keyframes fadeInUp {
+                from {
+                    transform: translateY(20px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateY(0);
+                    opacity: 1;
+                }
+            }
+
+        
+            /* Call to Action Buttons */
+            .cta-button {
+                margin: 10px;
+                padding: 15px 30px;
+                font-size: 1.1rem;
+                letter-spacing: 1px;
+                text-transform: uppercase;
+                transition: all 0.3s ease;
+            }
+
+            .cta-button:hover {
+                transform: scale(1.05); /* Slight zoom-in effect */
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Add shadow for more depth */
+            }
+
+            /* Features Section */
+            .features-section {
+                background-color: #f0f0f0;
+                padding: 60px 0;
+                border-radius: 10px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                animation: fadeInUp 1.5s ease-out;
+            }
+        
+            /* Feature Card */
+            .feature-card {
+                background: white;
+                padding: 30px;
+                border-radius: 8px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+                transition: transform 0.3s ease-in-out;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                height: 100%;
+                min-height: 300px;
+            }
+        
+            .feature-card:hover {
+                transform: translateY(-10px);
+            }
+        
+            .feature-icon {
+                color: #007bff;
+                transition: color 0.3s ease-in-out;
+            }
+        
+            .feature-card:hover .feature-icon {
+                color: #0056b3;
+            }
+        
+            /* Button Styles */
+            .btn-primary {
+                background-color: #007bff;
+                border-color: #007bff;
+                transition: background-color 0.3s ease-in-out;
+            }
+        
+            .btn-primary:hover {
+                background-color: #0056b3;
+                border-color: #0056b3;
+            }
+        
+            .btn-light {
+                background-color: #f8f9fa;
+                color: #007bff;
+                border-color: #f8f9fa;
+            }
+        
+            .btn-light:hover {
+                background-color: #e2e6ea;
+                border-color: #d6d8db;
+            }
+            .hero-section h1, .hero-section p {
+                font-family: 'Exo 2', sans-serif;
+                animation: fadeIn 2s ease-out;
+            }
+
+            /* Newsletter Styling */
+            .newsletter-card {
+                background-color: white;
+                padding: 30px;
+                border-radius: 10px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+                margin-bottom: 40px;
+            }
+
+            .newsletter-header {
+                margin-bottom: 30px;
+                border-bottom: 2px solid #f0f0f0;
+                padding-bottom: 15px;
+            }
+
+            .newsletter-title {
+                font-size: 1.75rem;
+                font-weight: bold;
+                color: #2a5298;
+            }
+
+            .newsletter-summary {
+                font-size: 1.1rem;
+                color: #555;
+            }
+
+            .newsletter-section h4 {
+                font-size: 1.5rem;
+                color: #007bff;
+                margin-bottom: 10px;
+            }
+
+            .newsletter-list {
+                list-style-type: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            .newsletter-list li {
+                font-size: 1.1rem;
+                margin-bottom: 10px;
+                color: #555;
+            }
+
+            .newsletter-list li strong {
+                color: #2a5298;
+            }
+
+            /* Navbar Customization */
+            .navbar {
+                padding-top: 5px; /* Adjust space at the top */
+                padding-bottom: 5px; /* Reduce bottom padding for compactness */
+                background-color: #f8f9fa; /* Light background for a clean look */
+                border-bottom: 1px solid #e2e6ea; /* Soft border at the bottom for definition */
+                position: fixed; /* Fix the navbar at the top */
+                top: 0; /* Ensure it sticks to the top */
+                width: 100%;
+                z-index: 9999; /* Ensure it's always above content */
+            }
+
+            /* Branding (Navbar Brand) */
+            .navbar-brand {
+                font-size: 1.75rem;
+                font-weight: bold;
+                color: #007bff; /* Add a subtle blue to the branding */
+                text-transform: uppercase;
+                letter-spacing: 2px;
+                transition: color 0.3s ease;
+            }
+
+            .navbar-brand:hover {
+                color: #0056b3; /* Darker blue when hovered */
+            }
+
+            /* Navbar Links */
+            .navbar-nav .nav-link {
+                color: #495057; /* Darker text for the links */
+                font-size: 1.1rem;
+                padding-left: 15px;
+                padding-right: 15px;
+                text-transform: uppercase;
+                transition: color 0.3s ease, background-color 0.3s ease;
+            }
+
+            /* Navbar Links on Hover */
+            .navbar-nav .nav-link:hover {
+                color: #007bff; /* Blue color for hover */
+                background-color: #f1f1f1; /* Light background for hover */
+                border-radius: 4px; /* Slight rounded corners on hover */
+            }
+
+            /* Active Link (Current Page) */
+            .navbar-nav .nav-item.active .nav-link {
+                font-weight: bold;
+                color: #007bff;
+                background-color: #e2e6ea;
+            }
+
+            /* Mobile Navbar Toggle Button */
+            .navbar-toggler {
+                border-color: #007bff; /* Blue border for the toggle button */
+            }
+            
+            /* Mobile Navbar Menu */
+            @media (max-width: 991px) {
+                .navbar-nav .nav-item {
+                    margin-bottom: 10px;
+                }
+                .navbar-nav .nav-link {
+                    font-size: 1.2rem;
+                }
+            }

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="jumbotron text-center">
+            <p class="lead">Hello, {{ current_user.email }}! You are now logged in.</p>
+            <p class="lead">Stay ahead with the latest stock insights, AI-powered analysis, and market news!</p>
+
+            <!-- Display subscription status -->
+            <div class="alert alert-info">
+                <strong>Your Subscription: </strong> 
+                <span class="font-weight-bold">{{ subscription_status }}</span>
+            </div>
+
+            <!-- If subscription is active, show cancel button -->
+            {% if subscription_status == 'active' %}
+                <!-- Place Cancel Subscription Button at the bottom of the page -->
+                <p>Your subscription is currently active. Thank you for subscribing!</p>
+            {% else %}
+                <div class="alert alert-warning">
+                    <strong>Your subscription is {{ subscription_status }}.</strong><br>
+                    You can renew it at any time to continue receiving updates.
+                </div>
+                <!-- Renew Subscription button -->
+                <a href="{{ url_for('routes.create_checkout_session', user_id=current_user.id) }}" class="btn btn-success btn-lg mb-3">Renew Subscription</a>
+            {% endif %}
+            <!-- Display user info -->
+            <div class="overlay_blur">
+                <strong>User Information:</strong>
+                <ul>
+                    <li><strong>Email:</strong> {{ current_user.email }}</li>
+                </ul>
+            </div>
+            <div class="d-flex justify-content-center"></div>
+                <a class="btn btn-primary btn-md mx-2" href="{{ url_for('routes.logout') }}" role="button">Log Out</a>
+                    
+                {% if subscription_status == 'active' %}
+                    <a href="{{ url_for('routes.cancel_subscription') }}" class="btn btn-danger btn-md mx-2">Cancel Subscription</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
