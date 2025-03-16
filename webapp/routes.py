@@ -178,29 +178,34 @@ def cancel_subscription():
     user = User.query.filter_by(id=current_user.id).first()
 
     if request.method == 'POST':
-        # Check if the user has a Stripe subscription ID
-        if user.subscription_status:
+        # Check if the user has an active subscription or recurring payment
+        if user.subscription_status == 'active':  # Ensure subscription is active
             try:
-                # Cancel the Stripe subscription
-                stripe.Subscription.delete(user.subscription_status)
+                # List any open invoices for this customer (i.e., upcoming payments)
+                invoices = stripe.Invoice.list(customer=user.stripe_customer_id, status='open')
 
-                # Update the subscription status in your database to 'inactive'
+                # Cancel any open invoices (if there are any)
+                for invoice in invoices.data:
+                    stripe.Invoice.void(invoice.id)  # This voids the invoice, stopping payment
+
+                # Update the user's subscription status in your database to 'inactive'
                 user.subscription_status = 'inactive'  # Or 'canceled' if you prefer
                 db.session.commit()  # Commit the changes to the database
 
                 flash('Your subscription has been canceled successfully.', 'success')
+
             except stripe.error.StripeError as e:
-                # Handle Stripe errors (e.g., invalid subscription ID)
+                # Handle Stripe errors (e.g., invalid customer ID or invoice issues)
                 flash('There was an error canceling your subscription. Please try again later.', 'danger')
+                print(f"Error canceling subscription: {e}")
                 return redirect(url_for('routes.home'))  # Redirect back to home page in case of error
 
         else:
-            flash('No subscription found to cancel.', 'danger')
+            flash('No active subscription found to cancel.', 'danger')
 
         return redirect(url_for('routes.home'))  # Redirect back to home page after cancellation
 
-    return render_template('cancel_subscription.html')  # Return the cancel subscription page
-
+    return render_template('cancel_subscription.html') 
 @routes.route('/webhook', methods=['POST'])
 def stripe_webhook():
     endpoint_secret = Config.STRIPE_WEBHOOK_KEY
