@@ -12,3 +12,4 @@ class Config:
     STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
     WTF_CSRF_ENABLED = True
     SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
+    STRIPE_WEBHOOK_KEY = os.getenv("STRIPE_WEBHOOK_KEY")

@@ -174,31 +174,44 @@ def cancel():
 @routes.route('/cancel_subscription', methods=['GET', 'POST'])
 @login_required
 def cancel_subscription():
+    stripe.api_key = Config.STRIPE_SECRET_KEY
     user = User.query.filter_by(id=current_user.id).first()
 
     if request.method == 'POST':
-        # Update the subscription status to 'canceled'
-        user.subscription_status = 'inactive'
-        db.session.commit()  # Commit the change to the database
+        # Check if the user has a Stripe subscription ID
+        if user.stripe_subscription_id:
+            try:
+                # Cancel the Stripe subscription
+                stripe.Subscription.delete(user.stripe_subscription_id)
 
-        flash('Your subscription has been canceled successfully.', 'success')
-        return redirect(url_for('routes.home'))  # Redirect back to home page
+                # Update the subscription status in your database to 'inactive'
+                user.subscription_status = 'inactive'  # Or 'canceled' if you prefer
+                db.session.commit()  # Commit the changes to the database
 
-    return render_template('cancel_subscription.html')
+                flash('Your subscription has been canceled successfully.', 'success')
+            except stripe.error.StripeError as e:
+                # Handle Stripe errors (e.g., invalid subscription ID)
+                flash('There was an error canceling your subscription. Please try again later.', 'danger')
+                return redirect(url_for('routes.home'))  # Redirect back to home page in case of error
+
+        else:
+            flash('No subscription found to cancel.', 'danger')
+
+        return redirect(url_for('routes.home'))  # Redirect back to home page after cancellation
+
+    return render_template('cancel_subscription.html')  # Return the cancel subscription page
 
 @routes.route('/webhook', methods=['POST'])
 def stripe_webhook():
-    stripe.api_key = Config.STRIPE_SECRET_KEY  # Ensure it's set here, just in case
+    endpoint_secret = Config.STRIPE_WEBHOOK_KEY
+    stripe.api_key = Config.STRIPE_SECRET_KEY
+    
+    payload = request.get_data(as_text=True)  # Get the raw body of the request
+    sig_header = request.headers.get('Stripe-Signature')  # Get the Stripe-Signature header
 
-    # The endpoint secret you received when registering your webhook in Stripe
-    endpoint_secret = 'whsec_...your-secret-key...'
-
-    # Retrieve the payload and signature from the request
-    payload = request.get_data(as_text=True)
-    sig_header = request.headers.get('Stripe-Signature')
-
-    # Verify the webhook signature to ensure it's from Stripe
+    # Verify the webhook signature to ensure the event is coming from Stripe
     try:
+        # This will raise an exception if the signature is invalid
         event = stripe.Webhook.construct_event(
             payload, sig_header, endpoint_secret
         )
@@ -209,34 +222,21 @@ def stripe_webhook():
         # Invalid signature
         return 'Signature verification failed', 400
 
-    # Handle the event type
-    if event['type'] == 'invoice.payment_succeeded':
-        # Payment succeeded, activate subscription
-        invoice = event['data']['object']  # Contains a stripe.Invoice object
-        customer_id = invoice['customer']
-        user = User.query.filter_by(stripe_customer_id=customer_id).first()
+    # Handle the customer.subscription.deleted event
+    if event['type'] == 'customer.subscription.deleted':
+        subscription = event['data']['object']  # Contains the subscription object
+        customer_id = subscription['customer']  # Get the customer ID
+        user = User.query.filter_by(stripe_customer_id=customer_id).first()  # Find the user by Stripe customer ID
 
         if user:
-            user.subscription_status = 'active'
-            db.session.commit()
-            print(f"Subscription activated for {user.email}")
+            # Mark the user as inactive in your database
+            user.subscription_status = 'inactive'  # Or 'canceled' depending on your preference
+            db.session.commit()  # Commit the change to the database
+            print(f"Subscription canceled for {user.email}")  # You can also log this if needed
         else:
-            print("User not found")
+            print(f"User not found for customer ID {customer_id}")
 
-    elif event['type'] == 'invoice.payment_failed':
-        # Payment failed, deactivate subscription
-        invoice = event['data']['object']
-        customer_id = invoice['customer']
-        user = User.query.filter_by(stripe_customer_id=customer_id).first()
-
-        if user:
-            user.subscription_status = 'inactive'
-            db.session.commit()
-            print(f"Subscription deactivated for {user.email}")
-        else:
-            print("User not found")
-
-    # More event types can be handled as needed
+    # Handle other events as necessary (e.g., invoice.payment_succeeded, etc.)
 
     # Return a 200 response to acknowledge receipt of the event
     return jsonify(success=True)
