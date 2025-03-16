@@ -181,12 +181,19 @@ def cancel_subscription():
         # Check if the user has an active subscription or recurring payment
         if user.subscription_status == 'active':  # Ensure subscription is active
             try:
+                # Log the user details for debugging
+                print(f"Attempting to cancel subscription for user: {user.email} with ID: {user.stripe_customer_id}")
+
                 # List any open invoices for this customer (i.e., upcoming payments)
                 invoices = stripe.Invoice.list(customer=user.stripe_customer_id, status='open')
 
-                # Cancel any open invoices (if there are any)
-                for invoice in invoices.data:
-                    stripe.Invoice.void(invoice.id)  # This voids the invoice, stopping payment
+                if not invoices.data:
+                    print(f"No open invoices found for user {user.email}")
+                else:
+                    # Cancel any open invoices (if there are any)
+                    for invoice in invoices.data:
+                        print(f"Voiding invoice ID: {invoice.id}")  # Log the invoice ID
+                        stripe.Invoice.void(invoice.id)  # This voids the invoice, stopping payment
 
                 # Update the user's subscription status in your database to 'inactive'
                 user.subscription_status = 'inactive'  # Or 'canceled' if you prefer
@@ -194,18 +201,28 @@ def cancel_subscription():
 
                 flash('Your subscription has been canceled successfully.', 'success')
 
+                # Log success for debugging
+                print(f"Subscription successfully canceled for {user.email}")
+
             except stripe.error.StripeError as e:
                 # Handle Stripe errors (e.g., invalid customer ID or invoice issues)
                 flash('There was an error canceling your subscription. Please try again later.', 'danger')
                 print(f"Error canceling subscription: {e}")
                 return redirect(url_for('routes.home'))  # Redirect back to home page in case of error
 
+            except Exception as e:
+                # Catch other errors
+                flash("An unexpected error occurred. Please try again later.", 'danger')
+                print(f"Unexpected error: {e}")
+                return redirect(url_for('routes.home'))
+
         else:
             flash('No active subscription found to cancel.', 'danger')
 
         return redirect(url_for('routes.home'))  # Redirect back to home page after cancellation
 
-    return render_template('cancel_subscription.html') 
+    return render_template('cancel_subscription.html')  # Return the cancel subscription page
+
 @routes.route('/webhook', methods=['POST'])
 def stripe_webhook():
     endpoint_secret = Config.STRIPE_WEBHOOK_KEY
