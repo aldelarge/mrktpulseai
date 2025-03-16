@@ -197,13 +197,38 @@
 
             .feature-icon {
                 color: #ffffff; /* White for icon color */
-                transition: color 0.3s ease-in-out;
+                transition: color 0.5s ease, text-shadow 1s ease; /* Smooth transition for color and glow */
             }
 
             .feature-card:hover .feature-icon {
                 color: #00ff00; /* Matrix Green on hover */
             }
+            /* Light up effect (e.g., a glow) */
+            .feature-icon.light-up {
+                animation: lightUpAnimation 2s ease-out forwards; /* Slow light-up effect */
+            }
 
+            @keyframes lightUpAnimation {
+                0% {
+                    color: #28a745; /* Initial color */
+                    text-shadow: 0 0 10px #28a745, 0 0 20px #28a745, 0 0 30px #28a745;
+                }
+                50% {
+                    color: #a0e700; /* Transition to a lighter green */
+                    text-shadow: 0 0 20px #a0e700, 0 0 40px #a0e700, 0 0 60px #a0e700; /* Glowing starts to intensify */
+                }
+                100% {
+                    color: #a0e700; /* Light green color */
+                    text-shadow: 0 0 20px #a0e700, 0 0 40px #a0e700, 0 0 60px #a0e700;
+                }
+            }
+
+            /* Ensure the light-up effect only applies on mobile */
+            @media (max-width: 767px) {
+                .feature-icon.light-up {
+                    animation: lightUpAnimation 1s ease-out forwards;
+                }
+            }
             /* Button Styles */
             .btn-primary {
                 background-color: #00ff00; /* Matrix Green for buttons */
@@ -478,6 +503,7 @@
         retina_detect: true, // Make particles adjust to high resolution screens
     });
 </script>
+
 <script>
     const observer = new IntersectionObserver((entries, observer) => {
         entries.forEach(entry => {
@@ -498,6 +524,44 @@
     sections.forEach(section => {
         observer.observe(section); // Start observing each section
     });
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // Check if the device is mobile (screen width <= 767px)
+    if (window.innerWidth <= 767) {
+        // Select all the icons with the 'feature-icon' class
+        const icons = document.querySelectorAll('.feature-icon');
+
+        // Create an intersection observer to detect when the icons come into view
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Add 'light-up' class with delay when the icon comes into view (100% visible)
+                    setTimeout(() => {
+                        entry.target.classList.add('light-up');
+                    }, 500); // Delay before the light-up effect (500ms)
+
+                    // Stop observing the icon after it's been animated
+                    observer.unobserve(entry.target);
+
+                    // // Optionally, remove the light-up class after the animation (1s delay)
+                    // setTimeout(() => {
+                    //     entry.target.classList.remove('light-up');
+                    // }, 1500); // Remove light-up class after 1.5 seconds (duration of the animation)
+                }
+            });
+        }, { 
+            threshold: 0,
+            rootMargin: "0px 0px -40% 0px" // Trigger when the icon is in the center of the screen
+        }); // Trigger when 100% of the icon is in view
+
+        // Observe each icon
+        icons.forEach(icon => {
+            observer.observe(icon);
+        });
+    }
+});
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
