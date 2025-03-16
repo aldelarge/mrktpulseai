@@ -178,34 +178,34 @@ def cancel_subscription():
     user = User.query.filter_by(id=current_user.id).first()
 
     if request.method == 'POST':
-        # Check if the user has an active subscription
-        if user.subscription_status == 'active':  # Ensure subscription is active
+        # Check if the user has a stripe_customer_id (this ID identifies the customer in Stripe)
+        if user.stripe_customer_id:  # Ensure user has a stripe_customer_id
             try:
                 # Log the user details for debugging
-                print(f"Attempting to cancel subscription for user: {user.email} with ID: {user.stripe_customer_id}")
+                print(f"Attempting to cancel subscription for user: {user.email} with Stripe Customer ID: {user.stripe_customer_id}")
 
-                # Fetch the subscription ID from the user (make sure this is stored in the database)
-                subscription_id = user.stripe_subscription_id
+                # Retrieve all subscriptions associated with the Stripe customer
+                subscriptions = stripe.Subscription.list(customer=user.stripe_customer_id)
 
-                if not subscription_id:
-                    print(f"No subscription ID found for user: {user.email}")
-                    flash('No active subscription found to cancel.', 'danger')
-                    return redirect(url_for('routes.home'))
+                if subscriptions.data:
+                    # Cancel all active subscriptions for the user
+                    for subscription in subscriptions.data:
+                        print(f"Cancelling subscription with ID: {subscription.id}")  # Log the subscription ID
+                        stripe.Subscription.delete(subscription.id)  # Cancel the subscription in Stripe
 
-                # Cancel the subscription in Stripe
-                stripe.Subscription.delete(subscription_id)
+                    # Update the user's subscription status in the database to 'inactive'
+                    user.subscription_status = 'inactive'  # Or 'canceled' if you prefer
+                    db.session.commit()  # Commit the changes to the database
 
-                # Update the user's subscription status in the database to 'inactive'
-                user.subscription_status = 'inactive'  # Or 'canceled' if you prefer
-                db.session.commit()  # Commit the changes to the database
+                    flash('Your subscription has been canceled successfully.', 'success')
 
-                flash('Your subscription has been canceled successfully.', 'success')
-
-                # Log success for debugging
-                print(f"Subscription successfully canceled for {user.email}")
+                    # Log success for debugging
+                    print(f"Subscription successfully canceled for {user.email}")
+                else:
+                    flash('No active subscriptions found for your account.', 'danger')
 
             except stripe.error.StripeError as e:
-                # Handle Stripe errors (e.g., invalid subscription ID)
+                # Handle Stripe errors (e.g., invalid customer ID or subscription issues)
                 flash('There was an error canceling your subscription. Please try again later.', 'danger')
                 print(f"Error canceling subscription: {e}")
                 return redirect(url_for('routes.home'))  # Redirect back to home page in case of error
@@ -217,7 +217,7 @@ def cancel_subscription():
                 return redirect(url_for('routes.home'))
 
         else:
-            flash('No active subscription found to cancel.', 'danger')
+            flash('No Stripe customer ID found for your account.', 'danger')
 
         return redirect(url_for('routes.home'))  # Redirect back to home page after cancellation
 
