@@ -25,10 +25,10 @@ def create_app():
 
     # Set the SQLALCHEMY_DATABASE_URI based on DATABASE_URL from environment
     if 'DATABASE_URL' in os.environ:
-        app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL'].replace("postgres://", "postgresql://")
+        app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL').replace("postgres://", "postgresql://")
     else:
         app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/stock_newsletter'
-        
+
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # Initialize the extensions
