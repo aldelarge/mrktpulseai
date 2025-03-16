@@ -23,7 +23,7 @@ WEEKLY_REPORTS_FILE = "weekly_reports.json"
 
 app = create_app()
 
-current_day = datetime.datetime.now().weekday()
+current_day = datetime.now().weekday()
 
 def format_sector_performance(sectors):
     formatted = "\n".join([f"{sector['sector']}: {sector['percent_change']}" for sector in sectors])
