@@ -179,10 +179,10 @@ def cancel_subscription():
 
     if request.method == 'POST':
         # Check if the user has a Stripe subscription ID
-        if user.stripe_subscription_id:
+        if user.subscription_status:
             try:
                 # Cancel the Stripe subscription
-                stripe.Subscription.delete(user.stripe_subscription_id)
+                stripe.Subscription.delete(user.subscription_status)
 
                 # Update the subscription status in your database to 'inactive'
                 user.subscription_status = 'inactive'  # Or 'canceled' if you prefer
