@@ -140,7 +140,6 @@ async def weekly_tasks():
     else:
         print("No weekend news found.")
 
-
 async def main():
     print("Starting main function...")
     

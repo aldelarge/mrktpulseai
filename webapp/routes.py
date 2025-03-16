@@ -110,7 +110,7 @@ def create_checkout_session(user_id):
         stripe.api_key = Config.STRIPE_SECRET_KEY  # Ensure it's set here, just in case
         
         # Get the price ID from Stripe dashboard (replace this)
-        price_id = "price_1R1ug4Dy1cSJj1EaSETKHVvG"
+        price_id = "price_1R3O9ADy1cSJj1EaL4svaxp0"
         
         # Create a checkout session for the subscription
         checkout_session = stripe.checkout.Session.create(
