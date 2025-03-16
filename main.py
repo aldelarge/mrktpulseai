@@ -23,6 +23,8 @@ WEEKLY_REPORTS_FILE = "weekly_reports.json"
 
 app = create_app()
 
+current_day = datetime.datetime.now().weekday()
+
 def format_sector_performance(sectors):
     formatted = "\n".join([f"{sector['sector']}: {sector['percent_change']}" for sector in sectors])
     return f"Sector Performance:\n{formatted}"
@@ -141,7 +143,7 @@ async def weekly_tasks():
 
 async def main():
     print("Starting main function...")
-
+    
     daily_market_update = await daily_tasks()
 
     dmu_formatted = format_market_summary(daily_market_update)
