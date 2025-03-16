@@ -538,9 +538,9 @@ document.addEventListener("DOMContentLoaded", function () {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     // Add 'light-up' class with delay when the icon comes into view (100% visible)
-                    setTimeout(() => {
-                        entry.target.classList.add('light-up');
-                    }, 500); // Delay before the light-up effect (500ms)
+                    
+                    entry.target.classList.add('light-up');
+                     // Delay before the light-up effect (500ms)
 
                     // Stop observing the icon after it's been animated
                     observer.unobserve(entry.target);
