@@ -103,7 +103,7 @@ def checkout():
 # Route for creating the Stripe checkout session
 @routes.route("/create-checkout-session/<int:user_id>", methods=["POST", "GET"])
 def create_checkout_session(user_id):
-    YOUR_DOMAIN = "http://127.0.0.1:5000"  # Change to your actual domain in production
+    YOUR_DOMAIN = "http://mrktpulseai.com"  # Change to your actual domain in production
 
     try:
         # Make sure the secret key is set
