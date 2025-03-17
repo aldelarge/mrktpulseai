@@ -1,22 +1,30 @@
 {% extends "base.html" %}
 
 {% block content %}
-        <div class="container mt-5">
-            
+        <div class="container-fluid">
             <!-- Hero Section: AI-powered and Stock Insights -->
             <div class="row justify-content-center text-center hero-section fullpage">
                 <div class="col-md-8">
                     <h1 class="display-4 text-white hero-title">AI-Powered Stock Insights Delivered Daily</h1>
                     <p class="lead text-white hero-description">
                         Leverage the power of Artificial Intelligence to gain deep insights from trending stock news, real-time market data, and comprehensive stock analysis. Stay ahead of the market and make informed investment decisions with confidence.         
-                    </p>               
+                    </p> 
+
+                    <!-- Buttons -->
+                    <div class="cta-buttons">
                         <a class="btn btn-primary btn-lg cta-button" href="{{ url_for('routes.signup') }}" role="button">Sign Up</a>
                         <a class="btn btn-light btn-lg cta-button" href="{{ url_for('routes.login') }}" role="button">Log In</a>
-                    </p>
+                    </div>
+                    <p class="text-muted mt-3">No hidden fees • Secure checkout • Cancel anytime</p>
+                </div>
+                
+                <!-- Scroll Arrow -->
+                <div class="scroll-arrow">
+                    <i class="fas fa-arrow-down"></i>
                 </div>
             </div>
         </div>
-
+ 
         <!-- How It Works Section: Process Explanation -->
         <!-- How It Works Section: Process Explanation -->
         <div class="fullpage">

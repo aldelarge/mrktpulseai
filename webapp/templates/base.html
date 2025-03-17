@@ -14,6 +14,7 @@
                 margin: 0px;
                 height: 100%;   
                 width: 100%; 
+                scroll-behavior: smooth;
             }
             body {
                 font-family: 'Exo 2', sans-serif;
@@ -117,18 +118,29 @@
                 z-index: -1; /* Make sure particles stay behind the content */
             }
 
+            /* Fullscreen hero section */
             .hero-section {
-                position: relative;
-                padding: 15vh 0;
+                height: 100vh; /* Full viewport height */
+                display: flex;
+                align-items: center; /* Centers everything horizontally */
                 text-align: center;
                 color: white;
+                position: relative;
+                padding: 50px 0; /* Prevents content from touching edges */
+
+            }
+            /* Centers content */
+            .hero-section .col-md-8 {
                 display: flex;
                 flex-direction: column;
-                justify-content: center; /* Vertically center content */
-                align-items: center; /* Horizontally center content */
-                height: 75vh; 
+                justify-content: center; /* Centers text and buttons vertically */
+                align-items: center;
+                max-width: 700px;
             }
-
+            /* Keeps buttons side-by-side */
+            .cta-buttons {
+                display: flex;
+            }
             .hero-title {
                 font-size: 3.5rem;
                 font-weight: 700;
@@ -140,6 +152,36 @@
                 font-weight: 300;
                 line-height: 1.6;
                 margin-bottom: 30px;
+            }
+
+            /* Scroll Arrow */
+            .scroll-arrow {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding-bottom: 30px; /* Adds space from the bottom */
+                animation: bounce 1.5s infinite;
+            }
+
+
+
+            .scroll-arrow i {
+                font-size: 30px;
+                color: #fff; /* White color for the arrow */
+                cursor: pointer;
+            }
+
+            /* Arrow bounce animation */
+            @keyframes bounce {
+                0% {
+                    transform: translateY(0);
+                }
+                50% {
+                    transform: translateY(10px);
+                }
+                100% {
+                    transform: translateY(0);
+                }
             }
 
             /* Call to Action Buttons */
@@ -367,6 +409,12 @@
                 font-size: 12px;
                 color: #ffffff; /* Light text color for the footer */
                 margin-top: auto; /* Pushes the footer to the bottom */
+            }
+
+            .signup-container {
+                max-width: 700px; /* Adjust the width as needed */
+                margin: 0 auto; /* Centers the div horizontally */
+                padding: 40px;
             }
 
         </style>     
