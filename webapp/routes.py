@@ -28,14 +28,11 @@ def landing():
     return render_template('landing.html')
 
 @routes.route('/home')
-@login_required
 def home():
     if not current_user.is_authenticated:
-        return redirect(url_for('routes.landing')) 
+        return redirect(url_for('routes.landing'))  # Redirect guests to landing page
 
     user = User.query.filter_by(id=current_user.id).first()
-
-    # Get subscription status
     subscription_status = user.subscription_status  # 'active', 'inactive', or 'canceled'
 
     return render_template('home.html', user=current_user, subscription_status=subscription_status)
