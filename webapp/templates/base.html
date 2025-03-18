@@ -3,13 +3,47 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>MRTKPULSEAI</title>
+        <!-- Primary Meta Tags -->
+        <title>MRKTPulseAI - AI-Powered Stock Market Insights</title>
+        <meta name="description" content="AI-powered stock market insights delivered daily at market close. Get real-time trends, earnings reports, and investment signals—filtered for what truly moves the market. No fluff, just actionable intelligence.">
+        <meta name="keywords" content="AI stock market insights, AI-powered stock analysis, real-time market trends, stock market news, AI trading signals, investment intelligence, earnings reports, stock market AI, automated market analysis, daily market updates, stock predictions, investment research, macroeconomic trends, market sentiment analysis, stock market newsletter, algorithmic trading insights, institutional investor trends, stock trading news, market-moving catalysts">
+        <meta name="author" content="MRKTPulseAI">
+        <meta name="robots" content="index, follow">
+
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="https://mrktpulseai.com/">
+        <meta property="og:title" content="MRKTPulseAI - AI-Powered Stock Market Insights">
+        <meta property="og:description" content="Daily AI-driven stock market insights. Stay ahead with real-time trends, earnings reports, and investment signals—delivered at market close.">
+        <meta property="og:image" content="https://mrktpulseai.com/static/images/marketpulse-preview.jpg">
+
+        <!-- Twitter -->
+        <meta property="twitter:card" content="summary_large_image">
+        <meta property="twitter:url" content="https://mrktpulseai.com/">
+        <meta property="twitter:title" content="MRKTPulseAI - AI-Powered Stock Market Insights">
+        <meta property="twitter:description" content="Daily AI-driven stock market insights. Stay ahead with real-time trends, earnings reports, and investment signals—delivered at market close.">
+        <meta property="twitter:image" content="https://mrktpulseai.com/static/images/marketpulse-preview.jpg">
+
+        <!-- Canonical URL -->
+        <link rel="canonical" href="https://mrktpulseai.com/">
+        <!-- Schema Markup for Better Search Visibility -->
+        <script type="application/ld+json">
+        {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "MRKTPulseAI",
+        "url": "https://mrktpulseai.com",
+        "logo": "https://mrktpulsai.com/static/images/logo.png",
+        "description": "AI-powered stock market insights delivered daily at market close. Get real-time trends, earnings reports, and investment signals—filtered for what truly moves the market. No fluff, just actionable intelligence.",
+        }
+        </script>
         <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
         <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700&display=swap" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> <!-- Added Font Awesome -->
 
         <style>
+
             html {
                 margin: 0px;
                 height: 100%;   
@@ -30,7 +64,6 @@
                 display: flex;
                 flex-direction: column; /* Column layout for the body */
             }
-
             strong.text-secondary {
                 font-weight: 600;
             }
@@ -95,6 +128,19 @@
                 color: #ffffff; /* Ensure text is white for readability */
                 z-index: 0; /* Ensures that text stays on top of the background */
                 border: 1px solid rgba(24, 24, 24, 0.5)
+            }
+
+            .overlay_blur2 {
+                position: relative;
+                display: block;
+                padding: 30px; /* Padding for spacing */
+                background: rgba(50, 50, 50, 0.4); /* Darker, slightly more opaque background */
+                backdrop-filter: blur(8px); /* Slightly stronger blur */
+                -webkit-backdrop-filter: blur(8px); /* Safari support */
+                border-radius: 10px;
+                color: #ffffff; /* Ensure white text for readability */
+                border: 1px solid rgba(80, 80, 80, 0.5); /* Subtle border for definition */
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Slight elevation */
             }
 
             .overlay::before {
@@ -247,21 +293,21 @@
             }
             /* Light up effect (e.g., a glow) */
             .feature-icon.light-up {
-                animation: lightUpAnimation 2s ease-out forwards; /* Slow light-up effect */
+                animation: lightUpAnimation 1.2s ease-out forwards;
             }
 
             @keyframes lightUpAnimation {
                 0% {
-                    color: #28a745; /* Initial color */
-                    text-shadow: 0 0 10px #28a745, 0 0 20px #28a745, 0 0 30px #28a745;
+                    color: #28a745;
+                    text-shadow: 0 0 10px #28a745, 0 0 20px #28a745;
                 }
                 50% {
-                    color: #a0e700; /* Transition to a lighter green */
-                    text-shadow: 0 0 20px #a0e700, 0 0 40px #a0e700, 0 0 60px #a0e700; /* Glowing starts to intensify */
+                    color: #00ff00; 
+                    text-shadow: 0 0 15px #00ff00, 0 0 30px #00ff00;
                 }
                 100% {
-                    color: #a0e700; /* Light green color */
-                    text-shadow: 0 0 20px #a0e700, 0 0 40px #a0e700, 0 0 60px #a0e700;
+                    color: #00ff00;
+                    text-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00;
                 }
             }
 
@@ -285,7 +331,22 @@
                 .scroll-arrow i {
                     font-size: 24px; /* Smaller arrow */
                 }
+                why-choose-section {
+                    background: #212121; /* Single background for small screens */
+                    padding: 50px 20px;
+                }
 
+                .why-choose-text, .why-choose-cta {
+                    text-align: center;
+                }
+
+                .why-choose-text {
+                    padding-bottom: 20px;
+                }
+
+                .cta-box {
+                    max-width: 100%;
+                }
             }
             /* Button Styles */
             .btn-primary {
@@ -354,6 +415,66 @@
                 margin-bottom: 10px;
             }
 
+            /* Why Choose MarketPulseAI Section */
+            .why-choose-section {
+                background-color: #181818; /* Black background */
+                padding: 80px 0;
+            }
+
+            /* Trust Points List */
+            .trust-points {
+                list-style: none;
+                padding: 0;
+                margin-top: 20px;
+            }
+
+            .trust-points li {
+                font-size: 1.2rem;
+                margin-bottom: 10px;
+                display: flex;
+                align-items: center;
+            }
+
+            .trust-points i {
+                color: #00ff00; /* Matrix Green */
+                margin-right: 10px;
+                font-size: 1.5rem;
+            }
+
+            /* Call to Action Box - Different Background */
+            .cta-box {
+                background-color: #252525; /* Dark gray to contrast */
+                border-radius: 10px;
+                padding: 40px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            }
+
+            .cta-box h3 {
+                font-size: 2rem;
+                font-weight: bold;
+                color: #ffffff;
+            }
+
+            .cta-box p {
+                font-size: 1.2rem;
+                color: #dcdcdc;
+                margin-bottom: 20px;
+            }
+
+            /* CTA Button */
+            .cta-box .btn-primary {
+                padding: 15px 30px;
+                font-size: 1.2rem;
+                background-color: #00ff00; /* Matrix Green */
+                border: none;
+                transition: all 0.3s ease;
+            }
+
+            .cta-box .btn-primary:hover {
+                background-color: #00b300;
+                transform: scale(1.05);
+            }
+
             /* Navbar Customization */
             .navbar {
                 padding-top: 5px;
@@ -408,6 +529,7 @@
                 border-color: #00ff00; /* Matrix Green for the mobile toggle */
             }
 
+
             @media (max-width: 991px) {
                 .navbar-nav .nav-item {
                     margin-bottom: 10px;
@@ -433,6 +555,26 @@
                 padding: 40px;
             }
 
+            .divider2 {
+                border-top: 2px dashed rgba(255, 255, 255, 0.5);
+                width: 70%;
+                margin: 20px auto;
+            }
+            .divider3 {
+                border: none;
+                height: 3px;
+                background: #00ff00;
+                width: 50%;
+                margin: 20px auto;
+            }
+            .divider4 {
+                border: none;
+                height: 2px;
+                width: 60%;
+                background-color: rgba(255, 255, 255, 0.3);
+                box-shadow: 0px 0px 5px rgba(255, 255, 255, 0.2);
+                margin: 20px auto;
+            }
         </style>     
     </head>
 </head>
@@ -592,38 +734,25 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    // Check if the device is mobile (screen width <= 767px)
     if (window.innerWidth <= 767) {
-        // Select all the icons with the 'feature-icon' class
         const icons = document.querySelectorAll('.feature-icon');
 
-        // Create an intersection observer to detect when the icons come into view
         const observer = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    // Add 'light-up' class with delay when the icon comes into view (100% visible)
+                    setTimeout(() => {
+                        entry.target.classList.add('light-up');
+                    }, 200); // Slight delay for smoothness
                     
-                    entry.target.classList.add('light-up');
-                     // Delay before the light-up effect (500ms)
-
-                    // Stop observing the icon after it's been animated
-                    observer.unobserve(entry.target);
-
-                    // // Optionally, remove the light-up class after the animation (1s delay)
-                    // setTimeout(() => {
-                    //     entry.target.classList.remove('light-up');
-                    // }, 1500); // Remove light-up class after 1.5 seconds (duration of the animation)
+                    observer.unobserve(entry.target); // Stop observing once triggered
                 }
             });
         }, { 
-            threshold: 0,
-            rootMargin: "0px 0px -40% 0px" // Trigger when the icon is in the center of the screen
-        }); // Trigger when 100% of the icon is in view
-
-        // Observe each icon
-        icons.forEach(icon => {
-            observer.observe(icon);
+            threshold: 1, // Fully in view
+            rootMargin: "0px 0px -30% 0px" // Triggers naturally as the user scrolls
         });
+
+        icons.forEach(icon => observer.observe(icon));
     }
 });
 </script>
