@@ -64,6 +64,7 @@
                 display: flex;
                 flex-direction: column; /* Column layout for the body */
             }
+            
             strong.text-secondary {
                 font-weight: 600;
             }
@@ -722,7 +723,7 @@
             }
         });
     }, {
-        threshold: window.innerWidth <= 768 ? 0.25 : 0.5 // 25% for small screens (<= 768px), 50% for larger screens
+        threshold: window.innerWidth <= 768 ? 0.25 : 0.4 // 25% for small screens (<= 768px), 50% for larger screens
     });
 
     // Target all sections with the 'fullpage' class
