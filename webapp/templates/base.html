@@ -569,6 +569,7 @@
                 width: 50%;
                 margin: 20px auto;
             }
+
             .divider4 {
                 border: none;
                 height: 2px;
@@ -576,6 +577,19 @@
                 background-color: rgba(255, 255, 255, 0.3);
                 box-shadow: 0px 0px 5px rgba(255, 255, 255, 0.2);
                 margin: 20px auto;
+            }
+
+            @media (max-width: 768px) {
+                .mobile-divider {
+                    display: block;  /* Show on mobile */
+                    margin: 10px auto;
+                }
+            }
+
+            @media (min-width: 769px) {
+                .mobile-divider {
+                    display: none;  /* Hide on desktop */
+                }
             }
         </style>     
     </head>
@@ -751,7 +765,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }, { 
             threshold: 1, // Fully in view
-            rootMargin: "0px 0px -30% 0px" // Triggers naturally as the user scrolls
+            rootMargin: "0px 0px -25% 0px" // Triggers naturally as the user scrolls
         });
 
         icons.forEach(icon => observer.observe(icon));
