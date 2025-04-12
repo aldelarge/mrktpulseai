@@ -1,0 +1,413 @@
+{% block styles %}
+<style>
+/* Override Bootstrap container styles ONLY on the home page */
+    .base-container {
+        width: 100vw !important;
+        max-width: 100% !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+</style>
+{% endblock %}
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container full-width-container">
+    <div class="styled-div overlay_blur text-center p-5 rounded">
+        <h2 class="text-white">Welcome Back, {{ current_user.email }}!</h2>
+        <p class="lead light-gray-text">
+            Your personal hub for AI-powered stock insights and market data.
+        </p>
+        <hr>
+        {% if subscription_status == 'active' %}
+        <!-- ACTIVE USER DASHBOARD -->
+        <div class="container-fluid full-width-container mt-4">
+            <div class="row">
+                <!-- Left Column: Market Data & Performance -->
+                <div class="col-lg-5 order-3 order-lg-1">
+                     <!-- ✅ User-Tracked Stocks Section with Collapsible Feature -->
+                    <div class="styled-div p-4 rounded mt-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="text-white mb-0">📌 Your Stocks</h4>
+                            <button class="btn btn-outline-light btn-sm toggle-btn" data-bs-toggle="collapse" data-bs-target="#yourStocksSection">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </div>
+                        <hr class="divider3">
+                        
+                        <!-- ✅ Main Collapsible Section -->
+                        <div class="collapse show" id="yourStocksSection">
+                            {% if user_stocks_data %}
+                            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                                <table class="table table-dark table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Symbol</th>
+                                            <th>Price</th>
+                                            <th>Change (%)</th>
+                                            <th>Volume</th>
+                                            <th>News</th>
+                                            <th>Summary</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for stock, data in user_stocks_data.items() %}
+                                        <tr>
+                                            <td><strong>{{ stock }}</strong></td>
+                                            <td>${{ data.price }}</td>
+                                            <td class="{% if data.change_percent > 0 %}text-success{% else %}text-danger{% endif %}">
+                                                {{ data.change_percent|float|round(2) }}%
+                                            </td>
+                                            <td>{{ data.volume }}</td>
+                                            <td>
+                                                <button class="btn btn-primary btn-sm" data-bs-toggle="collapse" data-bs-target="#news{{ stock }}">
+                                                    News
+                                                </button>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-info btn-sm" data-bs-toggle="collapse" data-bs-target="#summary{{ stock }}">
+                                                    Summary
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <!-- ✅ News Collapsible Section -->
+                                        <tr class="collapse" id="news{{ stock }}">
+                                            <td colspan="6">
+                                                <ul class="list-unstyled">
+                                                    {% for news in data.news %}
+                                                        <li><a href="{{ news.url }}" target="_blank">{{ news.headline }}</a></li>
+                                                    {% else %}
+                                                        <li><span class="text-muted">No news available</span></li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        <!-- ✅ Summary Collapsible Section -->
+                                        <tr class="collapse" id="summary{{ stock }}">
+                                            <td colspan="6">
+                                                <div class="alert alert-secondary text-dark">
+                                                    <strong>Summary:</strong>
+                                                    <p>{{ data.summary if data.summary else "No summary available yet." }}</p>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                                <p class="text-muted">No stocks saved. Add stocks to track their performance.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <!-- Most Active Stocks -->
+                    <div class="styled-div p-4 rounded mt-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="text-white mb-0">🔥 Most Active Stocks</h4>
+                            <button class="btn btn-outline-light btn-sm toggle-btn" data-bs-toggle="collapse" data-bs-target="#mostActiveStocks">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </div>
+                        <hr class="divider3">
+                        
+                        <!-- ✅ Collapsible Section -->
+                        <div class="collapse show" id="mostActiveStocks">
+                            <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                                <table class="table table-dark table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Symbol</th>
+                                            <th>Price</th>
+                                            <th>Change (%)</th>
+                                            <th>Volume</th>
+                                            <th>News</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for stock in top_traded %}
+                                        <tr>
+                                            <td><strong>{{ stock.symbol }}</strong></td>
+                                            <td>${{ stock.price }}</td>
+                                            <td class="{% if stock.change_percent > 0 %}text-success{% else %}text-danger{% endif %}">
+                                                {{ stock.change_percent|float|round(2) }}%
+                                            </td>
+                                            <td>{{ stock.volume }}</td>
+                                            <td>
+                                                <button class="btn btn-primary btn-sm" data-bs-toggle="collapse" data-bs-target="#toptraded_news{{ stock.symbol }}">
+                                                    News
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr class="collapse" id="toptraded_news{{ stock.symbol }}">
+                                            <td colspan="5">
+                                                <ul class="list-unstyled">
+                                                    {% for news in stock_news_dict.get(stock.symbol, []) %}
+                                                        <li><a href="{{ news.url }}" target="_blank">{{ news.headline }}</a></li>
+                                                    {% else %}
+                                                        <li><span class="text-muted">No news available</span></li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="styled-div p-4 rounded">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="text-white mb-0">📊 Top Movers</h4>
+                            <button class="btn btn-outline-light btn-sm toggle-btn" data-bs-toggle="collapse" data-bs-target="#TopGainers">
+                                <i class="fas fa-chevron-down"></i> 
+                            </button>
+                        </div>
+                        <hr class="divider3">
+                        
+                        <!-- ✅ Collapsible Section (Ensure the ID matches the button) -->
+                        <div class="collapse show" id="TopGainers"> <!-- Default open -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h5 class="text-success">📈 Top Gainers</h5>
+                                    <ul class="list-unstyled small">
+                                        {% for stock in gainers %}
+                                            <li><strong>{{ stock.symbol }}</strong> - {{ stock.change_percent|round(2) }}%</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <h5 class="text-danger">📉 Top Losers</h5>
+                                    <ul class="list-unstyled small">
+                                        {% for stock in losers %}
+                                            <li><strong>{{ stock.symbol }}</strong> - {{ stock.change_percent|round(2) }}%</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Middle Column: News Sections -->
+                <div class="col-lg-4 order-2 order-lg-2">
+                    <!-- ✅ Your Stock News Section with Collapsible Feature -->
+                    <div class="styled-div p-4 rounded mt-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="text-white mb-0">📌 Your Stock News</h4>
+                            <button class="btn btn-outline-light btn-sm toggle-btn" data-bs-toggle="collapse" data-bs-target="#stockNewsSection">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </div>
+                        <hr class="divider3">
+                        
+                        <div class="collapse show" id="stockNewsSection">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label for="filter-news-dropdown" class="text-white">Filter:</label>
+                                <select class="form-select form-select-sm w-auto bg-dark text-white" id="filter-news-dropdown">
+                                    <option value="all">Show All</option>
+                                    {% for stock in user_stocks_data.keys() %}
+                                        <option value="{{ stock }}">{{ stock }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="news-scroll" style="max-height: 500px; overflow-y: auto;">
+                                {% if user_stocks_data %}
+                                <ul class="list-unstyled" id="news-list">
+                                    {% for stock, data in user_stocks_data.items() %}
+                                    <li class="mb-3 stock-news-item" data-stock="{{ stock }}">
+                                        <h5 class="text-white">{{ stock }}</h5>
+                                        {% for news in data.news %}
+                                            <strong>{{ news.headline }}</strong><br>
+                                            <small class="text-secondary">{{ news.description }}</small><br>
+                                            <a href="{{ news.url }}" target="_blank" class="text-primary">Read More</a>
+                                            <small> - {{ news.source }}</small>
+                                            <hr>
+                                        {% else %}
+                                            <p class="text-muted">No news available for {{ stock }}.</p>
+                                        {% endfor %}
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                                {% else %}
+                                    <p class="text-muted">No news available for your tracked stocks.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ✅ Trending Market News with Collapsible Feature -->
+                    <div class="styled-div p-4 rounded mt-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="text-white mb-0">🔥 Trending Market News</h4>
+                            <button class="btn btn-outline-light btn-sm toggle-btn" data-bs-toggle="collapse" data-bs-target="#trendingNewsSection">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </div>
+                        <hr class="divider3">
+                        
+                        <div class="collapse show" id="trendingNewsSection">
+                            <div class="news-scroll" style="max-height: 500px; overflow-y: auto;">
+                                <ul class="list-unstyled">
+                                    {% for news in trending_news %}
+                                        <li class="mb-3">
+                                            <strong>{{ news.headline }}</strong><br>
+                                            <small class="text-secondary">{{ news.description }}</small><br>
+                                            <a href="{{ news.url }}" target="_blank" class="text-primary">Read More</a>
+                                            <small> - {{ news.source }}</small>
+                                            <hr>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ✅ Top Stock News with Collapsible Feature -->
+                    <div class="styled-div p-4 rounded mt-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="text-white mb-0">📢 Top Stock News</h4>
+                            <button class="btn btn-outline-light btn-sm toggle-btn" data-bs-toggle="collapse" data-bs-target="#topStockNewsSection">
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </div>
+                        <hr class="divider3">
+                        
+                        <div class="collapse show" id="topStockNewsSection">
+                            <div class="news-scroll" style="max-height: 500px; overflow-y: auto;">
+                                <ul class="list-unstyled">
+                                    {% for news in stock_news %}
+                                        <li class="mb-3">
+                                            <strong>{{ news.headline }}</strong><br>
+                                            <small class="text-secondary">{{ news.description }}</small><br>
+                                            <a href="{{ news.url }}" target="_blank" class="text-primary">Read More</a>
+                                            <small> - {{ news.source }}</small>
+                                            <hr>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- Right Column: User Info -->
+                <div class="col-lg-3 order-1 order-lg-3">
+                    <!-- User Profile -->
+                    <div class="styled-div p-4 rounded text-center">
+                        <h4 class="text-white">👤 User Profile</h4>
+                        <hr class="divider3">
+                        <ul class="list-unstyled text-secondary mb-0">
+                            <li class="mb-2"><i class="fas fa-envelope"></i> <strong>Email:</strong> {{ current_user.email }}</li>
+                            <li class="mb-2"><i class="fas fa-user-check"></i> <strong>Subscription:</strong> 
+                                <span class="{% if subscription_status == 'active' %}text-success{% else %}text-danger{% endif %}">
+                                    {{ subscription_status }}
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Saved Stocks Section -->
+                    <div class="styled-div p-4 rounded mt-3">
+                        <h4 class="text-white">📌 Tracked Stocks</h4>
+                        <hr class="divider3">
+
+                        <!-- Saved Stocks List -->
+                        <div class="saved-stocks-list" style="max-height: 200px; overflow-y: auto;">
+                            <ul class="list-unstyled">
+                                {% for stock in stocks_list %}
+                                    <li class="d-flex justify-content-between align-items-center">
+                                        <strong>{{ stock }}</strong>
+                                        <button class="btn btn-sm btn-danger remove-stock" data-symbol="{{ stock }}">✖</button>
+                                    </li>
+                                {% else %}
+                                    <li class="text-muted">No stocks saved.</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+
+                        <!-- Add Stock Form -->
+                        <div class="mt-3">
+                            <input type="text" id="stock-symbol" class="form-control text-center" placeholder="Enter stock symbol">
+                            <button class="btn btn-success btn-sm mt-2 w-100" id="save-stock-btn">Save Stock</button>
+                        </div>
+                    </div>
+                    <!-- Quick Links -->
+                    <div class="styled-div p-4 rounded mt-3 text-center">
+                        <h4 class="text-white">⚙️ Quick Links</h4>
+                        <hr class="divider3">
+                        <ul class="list-unstyled mb-0">
+                            <li>
+                                <a href="{{ url_for('routes.profile') }}" class="btn btn-outline-light btn-sm w-100 mb-2">
+                                    <i class="fas fa-user-edit"></i> Edit Profile
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ url_for('routes.logout') }}" class="btn btn-outline-danger btn-sm w-100 mb-2">
+                                    <i class="fas fa-sign-out-alt"></i> Log Out
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+        <div class="overlay_blur text-center mt-4">
+            <h4 class="text-white">Your Subscription is Inactive</h4>
+            <p class="text-secondary">Renew to continue receiving market updates.</p>
+            <a href="{{ url_for('routes.create_checkout_session', user_id=current_user.id) }}" class="btn btn-success btn-lg">Renew Subscription</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("save-stock-btn").addEventListener("click", function() {
+            let stockSymbol = document.getElementById("stock-symbol").value.trim().toUpperCase();
+            if (!stockSymbol) return;
+
+            fetch("/save_stock", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ symbol: stockSymbol })
+            }).then(response => response.json()).then(data => {
+                alert(data.message);
+                location.reload();
+            });
+        });
+
+        document.querySelectorAll(".remove-stock").forEach(button => {
+            button.addEventListener("click", function() {
+                let stockSymbol = this.getAttribute("data-symbol");
+
+                fetch("/remove_stock", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ symbol: stockSymbol })
+                }).then(response => response.json()).then(data => {
+                    alert(data.message);
+                    location.reload();
+                });
+            });
+        });
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let dropdown = document.getElementById("filter-news-dropdown");
+    
+        dropdown.addEventListener("change", function() {
+            let selectedStock = dropdown.value;
+            let newsItems = document.getElementsByClassName("stock-news-item");
+    
+            for (let item of newsItems) {
+                if (selectedStock === "all" || item.getAttribute("data-stock") === selectedStock) {
+                    item.style.display = "block";
+                } else {
+                    item.style.display = "none";
+                }
+            }
+        });
+    });
+    </script>
+{% endblock %}

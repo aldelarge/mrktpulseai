@@ -1,3 +1,34 @@
+{% block styles %}
+<style>
+    .snapshot {
+      max-height: 12em;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 5; /* show approx. 5 lines */
+      -webkit-box-orient: vertical;
+      text-overflow: ellipsis;
+      text-align: left;
+    }
+  
+    .snapshot p {
+      color: white !important; /* you forgot the # */
+    }
+    .text-glow-green {
+        /* color: #00ff00 !important; */
+        text-shadow: 0 0 12px rgba(0, 255, 0, 0.5);
+    }
+    .text-soft-glow {
+    color: #adb1bb;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.08);
+    }
+
+    .text-purple-soft-glow {
+    color: #a78bfa;
+    text-shadow: 0 0 4px rgba(167, 139, 250, 0.12);
+    }
+  </style>
+{% endblock %}
+
 {% extends "base.html" %}
 
 {% block content %}
@@ -6,9 +37,9 @@
             <!-- Hero Section: AI-powered and Stock Insights -->
             <div class="row justify-content-center text-center hero-section fullpage">
                 <div class="col-md-8">
-                    <h1 class="display-4 text-white hero-title">AI-Powered Stock Insights Delivered Daily</h1>
+                    <h1 class="display-4 text-white hero-title text-glow-green">Outsmart the Market with AI</h1>
                     <p class="lead text-white hero-description">
-                        Leverage the power of Artificial Intelligence to gain deep insights from trending stock news, real-time market data, and comprehensive stock analysis. Stay ahead of the market and make informed investment decisions with confidence.         
+                        Get razor-sharp stock insights powered by AI — personalized, real-time, and delivered after every market close.
                     </p> 
 
                     <!-- Buttons -->
@@ -26,30 +57,84 @@
             </div>
         </div>
         <br>
-        <!-- First Block: Delivered Daily -->
-        <div class="container fullpage">
+        <!-- Enhanced Block: Personalized AI Stock Snapshot -->
+        <div class="container fullpage mt-5">
             <div class="row justify-content-center">
-                <div class="col-md-10">
-                    <div class="styled-div overlay_blur text-center p-5 mb-4 rounded">
-                        <h3 class="text-white"><i>Delivered Daily at Market Close</i></h3>
-                        <p class="lead light-gray-text">
-                            We strip away the noise and focus on what actually moves stocks—giving you a competitive edge in minutes.
-                        </p>
-                        <p class="text-secondary">
-                            AI analyzes thousands of sources, summarizes key trends, and delivers clear, unbiased insights before the next session.
-                        </p>
-                        <hr class="divider3">
-                        <p class="text-white"><strong>Read it in minutes. Act with confidence.</strong></p>
+            <div class="col-md-12">
+                <div class="styled-div overlay_blur text-center p-5 mb-4 rounded">
+                    <h2 class="text-glow-green"><i>Your Stocks. Our AI. Real Insights.</i></h2>
+                    <p class="lead text-light">
+                    Every weekday at market close, you'll receive a concise, high-signal newsletter powered by
+                    <strong>real-time market data</strong> and <strong>GPT-4 intelligence</strong>.
+                </p>
+                <p class="text-soft-glow">
+                    Not just a recap — your AI co-pilot breaks down market trends <em>and</em> generates
+                    <strong>custom summaries for the stocks you care about most</strong>.
+                    Track tickers, get tailored insights, and stay ahead of the market — all in under 5 minutes.
+                </p>
+                <hr class="divider3">
+        
+                <div class="row g-4 align-items-start mt-4">
+                    <!-- AAPL Snapshot -->
+                    <div class="col-md-6 mb-4 mb-md-0">
+                        <div class="overlay_blur2 p-4 rounded-4 h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="text-success fw-bold mb-0" id="snapshot-aapl-symbol">Loading...</h5>
+                                <p class="text-light mb-0 small" id="snapshot-aapl-price"></p>
+                            </div>
+                            <hr class="my-2" style="border-color: rgba(255,255,255,0.15);">
+                            <div id="snapshot-aapl-summary" class="pt-2">
+                                <p class="text-soft-glow small snapshot">Fetching analysis...</p>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- NVDA Snapshot -->
+                    <div class="col-md-6">
+                        <div class="overlay_blur2 p-4 rounded-4 h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="text-success fw-bold mb-0" id="snapshot-nvda-symbol">Loading...</h5>
+                                <p class="text-light mb-0 small" id="snapshot-nvda-price"></p>
+                            </div>
+                            <hr class="my-2" style="border-color: rgba(255,255,255,0.15);">
+                            <div id="snapshot-nvda-summary" class="pt-2">
+                                <p class="text-soft-glow small snapshot">Fetching analysis...</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
+        
+                <!-- CTA Section -->
+                <div class="row justify-content-center mt-5">
+                    <div class="col-md-10 text-center p-5 rounded">
+                        <h3 class="text-white mb-4">
+                            Stop Guessing. Start Acting on Real Signals.
+                        </h2>
+                
+                        <p class="text-light fs-5 mb-3">
+                            This is just a glimpse — real-time AI analysis built from news, technicals, and market sentiment.
+                        </p>
+                
+                        <p class="text-soft-glow mb-6">
+                            Add your tickers and get clear, custom breakdowns delivered daily — no fluff, no noise, just the data that actually moves stocks.
+                        </p>
+                
+                        <a href="{{ url_for('routes.signup') }}" class="btn btn-primary btn-lg">
+                            Unlock My AI Snapshot
+                        </a>
+                    </div>
+                </div>
+        
+            </div>
+            </div>
             </div>
         </div>
-        <br>
+  
         <div class="container">
             <div class="container fullpage">
                 <div class="row justify-content-center text-center">
                     <div class="col-md-10">
-                        <h2 class="mb-4 text-white"><i>Outsmart the Market. Every. Single. Day.</i></h2>
+                        <h2 class="mb-4 text-white text-glow-green"><i>Why Traditional Analysis Isn’t Enough</i></h2>
                         <p class="lead light-gray-text">
                             Traditional market analysis is slow. By the time analysts react, the opportunity is gone.  
                             AI doesn’t wait. It scans, processes, and delivers real-time insights—before the market moves.
@@ -65,9 +150,9 @@
                                 <i class="fas fa-robot fa-3x feature-icon"></i>
                             </div>
                             <div>
-                                <h3 class="text-white"><i>No Bias. No Hype. Just Data.</i></h3>
+                                <h3 class="text-glow-green"><i>No Bias. No Hype. Just Data.</i></h3>
                                 <hr class="divider3 mobile-divider">
-                                <p class="text-secondary">
+                                <p class="text-soft-glow">
                                     Human analysts have opinions. AI has facts.  
                                     Our system tracks <strong>real-time market news, stock movements, and sentiment shifts</strong>—without emotion, without distractions.  
                                     No opinions. No spin. Just the <strong>signals that actually move stocks.</strong>
@@ -85,9 +170,9 @@
                                 <i class="fas fa-bolt fa-3x feature-icon"></i>
                             </div>
                             <div>
-                                <h3 class="text-white"><i>React Faster Than the Market.</i></h3>
+                                <h3 class="text-glow-green"><i>React Faster Than the Market.</i></h3>
                                 <hr class="divider3 mobile-divider">
-                                <p class="text-secondary">
+                                <p class="text-soft-glow">
                                     While traditional analysts debate what happened, AI identifies <strong>what’s happening now.</strong>  
                                     Our system <strong>analyzes thousands of sources, detects critical market trends, and delivers the insights you need—before the market reacts.</strong>
                                 </p>
@@ -104,9 +189,9 @@
                                 <i class="fas fa-eye fa-3x feature-icon"></i>
                             </div>
                             <div>
-                                <h3 class="text-white"><i>Designed for Action. Not Clicks.</i></h3>
+                                <h3 class="text-glow-green"><i>Designed for Action. Not Clicks.</i></h3>
                                 <hr class="divider3 mobile-divider">
-                                <p class="text-secondary">
+                                <p class="text-soft-glow">
                                     Financial media <strong>profits from sensationalism.</strong> We don’t.  
                                     Our AI system is built to <strong>deliver pure, actionable insights</strong>—not chase engagement.  
                                     No hype. No distractions. Just the <strong>data-driven intelligence you need to stay ahead.</strong>
@@ -118,98 +203,54 @@
             </div>
             <br>
         </div>
+        <br>
         <!-- How It Works Section: Process Explanation -->
         <div class="fullpage">
             <div class="row justify-content-center text-center mt-5">
                 <div class="col-md-10">
-                    <h1 class="mb-1"><i>How It Works</i></h1>
-                    <p class="lead overlay">
-                        Our advanced <strong class="text-secondary">AI system</strong> processes premium, real-time market data to deliver clear, actionable insights. By combining stock performance metrics, breaking news, and market sentiment, we analyze key trends and patterns from trusted, high-quality sources. Powered by <strong class="text-secondary">GPT-4</strong>, we provide you with the information you need to make informed decisions and stay ahead in a fast-moving market.
+                    <h2 class="mb-4 text-glow-green">
+                        <i>From Data to Decisions — Automatically</i>
+                    </h2>
+                    <p class="">
+                        Our advanced <strong class="text-soft-glow">AI system</strong> processes premium, real-time market data to deliver clear, actionable insights — instantly.
+                    </p>
+                    <p class="text-soft-glow">
+                        By combining <strong class="text-soft-glow">stock performance metrics</strong>, <strong class="text-soft-glow">breaking news</strong>, and <strong class="text-soft-glow">market sentiment</strong>, we detect key trends and patterns from trusted sources. Powered by <strong class="text-soft-glow">GPT-4</strong>, you get the intelligence you need to act fast — and stay ahead.
                     </p>
                 </div>
             </div>
+            <br>
             <!-- Step-by-Step Process Section -->
             <div class="row text-center">
                 <div class="col-md-4 mb-4">
-                    <div class="feature-card">
+                    <div class="feature-card over">
                         <i class="fas fa-stream fa-4x feature-icon"></i>
-                        <h3 class="border-bottom card_title">Collecting Data</h3>
-                        <p>
-                            We gather real-time, high-quality market data from <strong class="text-secondary">premium APIs</strong>, including breaking news, stock performance metrics, and market sentiment from trusted sources. This ensures that you receive the most accurate and up-to-date information available.
+                        <h3 class="border-bottom card_title text-glow-green">Collecting Data</h3>
+                        <p class="text-soft-glow">
+                            We gather real-time, high-quality market data from <strong class="text-soft-glow">premium APIs</strong>, including breaking news, stock performance metrics, and market sentiment from trusted sources. This ensures that you receive the most accurate and up-to-date information available.
                         </p>
                     </div>
                 </div>
                 <div class="col-md-4 mb-4">
                     <div class="feature-card">
                         <i class="fas fa-cogs fa-4x feature-icon"></i>
-                        <h3 class="border-bottom card_title">AI Processing</h3>
-                        <p>
-                            Our <strong class="text-secondary">AI system</strong> analyzes the collected data, filtering out noise and focusing on the key trends and patterns that matter. It combines stock market data with real-time news to generate a comprehensive understanding of market movements.
+                        <h3 class="border-bottom card_title text-glow-green">AI Processing</h3>
+                        <p class="text-soft-glow">
+                            Our <strong class="text-soft-glow">AI system</strong> analyzes the collected data, filtering out noise and focusing on the key trends and patterns that matter. It combines stock market data with real-time news to generate a comprehensive understanding of market movements.
                         </p>                    
                     </div>
                 </div>
                 <div class="col-md-4 mb-4">
                     <div class="feature-card">
                         <i class="fas fa-lightbulb fa-4x feature-icon"></i>
-                        <h3 class="border-bottom card_title">Actionable Insights</h3>
-                        <p>
-                            After processing the data, our <strong class="text-secondary">AI</strong> generates <strong class="text-secondary">actionable insights</strong> to help you make informed decisions. Whether it's stock recommendations, trend analysis, or risk assessments, we provide the essential information to stay ahead in the market.
+                        <h3 class="border-bottom card_title text-glow-green">Actionable Insights</h3>
+                        <p class="text-soft-glow">
+                            After processing the data, our <strong class="text-soft-glow">AI</strong> generates <strong class="text-soft-glow">actionable insights</strong> to help you make informed decisions. Whether it's stock recommendations, trend analysis, or risk assessments, we provide the essential information to stay ahead in the market.
                         </p>
                     </div>
                 </div>
             </div>
         </div>
-        <br>
-        <br>
-        <section class="newsletter-sample">
-            <div class="container">
-                <h3 class="text-center mb-3">Sample Daily Market Summary:</h3>
-                
-                <!-- Newsletter Card -->
-                <div class="overlay_blur">
-                    <div class="newsletter-header">
-                        <h3 class="newsletter-title">Market Summary for March 14, 2025</h3>
-                        <p class="newsletter-summary">Today's stock market activity was marked by a notable recovery from recent losses, despite ongoing concerns over trade policies and their economic implications. The major indices, including the S&P 500, Dow Jones, and Nasdaq, all posted gains, driven by a relief rally that seemed to counterbalance the negative sentiment from earlier in the week. However, underlying issues such as consumer sentiment deterioration and geopolitical tensions continue to loom over the market.</p>
-                    </div>
-        
-                    <!-- Key Movements and Trends -->
-                    <div class="newsletter-section">
-                        <h4>Key Movements and Trends:</h4>
-                        <p>The S&P 500 ETF (SPY) saw an increase of 1.89%, closing at $562.81, while the Dow Jones Industrial Average ETF (DIA) rose by 1.48% to $415.36. The Nasdaq-100 ETF (QQQ) experienced a significant jump of 2.22%, ending the day at $479.66. This rebound can be attributed to a mix of sector recoveries and some positive earnings reports that provided a temporary boost to investor confidence.</p>
-                    </div>
-        
-                    <!-- Major Catalysts -->
-                    <div class="newsletter-section">
-                        <h4>Major Catalysts:</h4>
-                        <ul class="newsletter-list">
-                            <li><strong>Consumer Sentiment and Economic Data:</strong> The University of Michigan's consumer sentiment index fell to 57.9, significantly below the expected 63.2. This drop reflects growing concerns about inflation and the potential recession, exacerbated by the ongoing trade tensions and tariff threats.</li>
-                            <li><strong>Geopolitical Events:</strong> President Trump's recent actions, including threats of increased tariffs on European alcohol and support for the Constitution gas pipeline, have stirred market volatility and legislative responses. These moves influence sector-specific stocks and overall market sentiment.</li>
-                            <li><strong>Market Corrections and Recoveries:</strong> Despite the S&P 500 entering correction territory earlier in the week, today's market showed resilience, suggesting underlying confidence in market fundamentals.</li>
-                        </ul>
-                    </div>
-        
-                    <!-- Sector Performance -->
-                    <div class="newsletter-section">
-                        <h4>Sector Performance:</h4>
-                        <p><strong>Technology:</strong> Led gains with a 3.09% increase, driven by a rebound in tech stocks which had previously seen significant sell-offs.</p>
-                        <p><strong>Energy:</strong> Outperformed with a 2.45% increase, possibly due to geopolitical tensions affecting oil supply expectations.</p>
-                        <p><strong>Financial Services and Consumer Cyclical:</strong> Strong recoveries were seen in these sectors, potentially due to easing concerns over financial restrictions and retail spending.</p>
-                    </div>
-        
-                    <!-- Overall Market Sentiment -->
-                    <div class="newsletter-section">
-                        <h4>Overall Market Sentiment:</h4>
-                        <p>The market sentiment today was cautiously optimistic, as evidenced by the rebound across major indices and sectors. However, the volatility index (VXX) saw a significant drop of 7.71%, indicating that while fear is receding, it remains a factor due to ongoing uncertainties. The mixed signals from consumer sentiment data versus stock market performance suggest that investors are weighing short-term recoveries against long-term economic indicators.</p>
-                    </div>
-        
-                    <!-- Conclusion -->
-                    <div class="newsletter-section">
-                        <h4>Conclusion:</h4>
-                        <p>Investors should consider the resilience of technology and energy sectors as potential opportunities, especially given their performance today amidst broader market uncertainties. However, caution is advised due to the potential for ongoing volatility driven by geopolitical developments and economic data releases. Diversification across sectors and careful monitoring of consumer sentiment and trade policy developments will be crucial for navigating the current market landscape.</p>
-                    </div>
-                </div> <!-- End Newsletter Card -->
-            </div>
-        </section>        
         <br>
         <!-- Call to Action -->
         <div class="row justify-content-center fullpage">
@@ -233,4 +274,27 @@
             </div>
         </div>
     </div>
+    <script>
+        function fetchSnapshot(symbol, prefix) {
+            fetch(`/landing_snapshot/${symbol}`)
+                .then(res => res.json())
+                .then(data => {
+                    const priceHtml = `${data.price} <span class="${data.change_percent.startsWith('+') ? 'text-success' : 'text-danger'}">(${data.change_percent})</span>`;
+        
+                    document.getElementById(`${prefix}-symbol`).innerText = `${data.symbol} Snapshot`;
+                    document.getElementById(`${prefix}-price`).innerHTML = priceHtml;
+        
+                    const summaryDiv = document.getElementById(`${prefix}-summary`);
+                    summaryDiv.innerHTML = `<div class="snapshot">${data.summary_text}</div>`;
+                })
+                .catch(error => {
+                    document.getElementById(`${prefix}-summary`).innerHTML = `<p class="text-danger small">⚠️ Failed to load snapshot.</p>`;
+                    console.error(`Snapshot error for ${symbol}:`, error);
+                });
+        }
+        
+        // ✅ Load both AAPL and NVDA with separate containers
+        fetchSnapshot("AAPL", "snapshot-aapl");
+        fetchSnapshot("NVDA", "snapshot-nvda");
+        </script>
 {% endblock %}

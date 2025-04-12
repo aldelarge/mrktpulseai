@@ -50,5 +50,15 @@ def create_app():
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
+    
+    # Register custom Jinja filters
+    def comma_format(value):
+        try:
+            return "{:,}".format(int(value))
+        except (ValueError, TypeError):
+            return value
+
+    app.jinja_env.filters['comma_format'] = comma_format
+
 
     return app

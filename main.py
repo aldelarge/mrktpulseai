@@ -7,14 +7,18 @@ from sentiment_analysis import analyze_daily_sentiment_gpt, analyze_weekly_senti
 from polygon_api import get_index_snapshot
 from polygon_api import format_etf_data
 from send_email import send_email
-from markdown import markdown_to_html, format_market_summary
+from markdown import format_market_summary
 from stock_news_api import fetch_top_headlines, format_market_analysis
 import json
 import os
 from datetime import datetime
+import pytz
 import asyncio
 from webapp import create_app, db
-from webapp.models import User 
+from webapp.models import User, StockData
+from daily_data import fetch_and_summarize_stock_news
+from sqlalchemy.orm import joinedload
+
 
 
 
@@ -24,6 +28,11 @@ WEEKLY_REPORTS_FILE = "weekly_reports.json"
 app = create_app()
 
 current_day = datetime.now().weekday()
+
+def is_weekday():
+    eastern = pytz.timezone("US/Eastern")
+    now = datetime.now(eastern)
+    return now.weekday() < 5  # 0 = Monday, 4 = Friday
 
 def format_sector_performance(sectors):
     formatted = "\n".join([f"{sector['sector']}: {sector['percent_change']}" for sector in sectors])
@@ -99,7 +108,8 @@ async def daily_tasks():
         # key_points = extract_key_points(sentiment_summary)
         # store_summary_key_points(key_points)
 
-        
+        fetch_and_summarize_stock_news()  # This ensures stock summaries are up-to-date.
+
         return sentiment_summary
     else:
         print("No news articles found.")
@@ -145,29 +155,41 @@ async def main():
     
     daily_market_update = await daily_tasks()
 
-    dmu_formatted = format_market_summary(daily_market_update)
-
     print(f"Market Update: {daily_market_update}") 
 
     with app.app_context():
-        # Retrieve all users' email addresses from the database
-        users = User.query.all()  # Fetch all users from the database
-        recipients = [user.email for user in users if user.subscription_status == "active"]
+        users = User.query.options(joinedload(User.saved_stocks)).all()
 
-    print("sending emails individually....")
-    # Loop through each recipient and send the email individually
-    for recipient in recipients:
-        try:
-            result = send_email("Daily Market Update", dmu_formatted, recipient)  # Send individual email to each recipient
-            print(result)  # Print success message
-        except Exception as e:
-            print(f"Error: {e}")  # Print error message if something goes wrong
-        
-    print("Email Sent! (:")
+        print("Sending personalized emails....")
 
+        for user in users:
+            if user.subscription_status != "active":
+                continue
 
-    # Run weekly tasks (can be scheduled to run every Sunday at noon)
-    # weekly_tasks()
+            # ✅ Fetch user's tracked stocks
+            tracked_stocks = [row.stock_symbol for row in user.saved_stocks]
+
+            # ✅ Retrieve summaries for the user's stocks
+            user_stock_summaries = []
+            for symbol in tracked_stocks:
+                stock_entry = StockData.query.filter_by(symbol=symbol).first()
+                if stock_entry and stock_entry.summary_text:
+                    user_stock_summaries.append(f"{symbol}: {stock_entry.summary_text}")
+
+            # ✅ Format the entire email using one function
+            styled_email = format_market_summary(daily_market_update, user_stock_summaries)
+
+            # ✅ Send the email
+            try:
+                result = send_email("📊 Your Daily Market Update", styled_email, user.email)
+                print(f"✅ Email sent to {user.email}")
+            except Exception as e:
+                print(f"❌ Error sending to {user.email}: {e}")
+
+    print("✅ All emails sent!")
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    if is_weekday():
+        asyncio.run(main())
+    else:
+        print("🛌 It's the weekend. Skipping weekday market email.")

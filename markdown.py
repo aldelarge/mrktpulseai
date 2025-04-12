@@ -1,66 +1,100 @@
 import re
+from datetime import datetime
 
-def markdown_to_html(md_text):
-    # Convert Markdown to HTML
+def format_market_summary(market_summary, stock_summaries=None):
+    """
+    Builds the full newsletter in HTML with clean layout, heading styles, and structured summary.
+    """
+    current_date = datetime.now().strftime("%A, %B %d, %Y")
+
+    html_parts = [
+        "<html>",
+        "<body style='margin: 0; padding: 0; font-family: Arial, sans-serif;'>",
+        "<table width='100%' cellpadding='0' cellspacing='0' style='background-color: #f8f8f8; padding: 30px 0;'>",
+        "<tr><td align='center'>",
+        "<table width='600' cellpadding='20' cellspacing='0' style='background: #ffffff; border-radius: 8px; border: 1px solid #ccc; text-align: left;'>",
+        f"<tr><td>",
+        f"<h1 style='font-size: 26px; color: #009933; margin: 0 0 10px;'>Daily Market Update</h1>",
+        f"<p style='color: #888; font-size: 14px; margin-bottom: 20px;'>{current_date}</p>",
+        f"<div style='font-size: 16px; color: #333; line-height: 1.6;'>{convert_markdown_to_html(market_summary)}</div>",
+        "<hr style='margin: 30px 0;'>"
+    ]
+
+    if stock_summaries:
+        html_parts.append("<h2 style='font-size: 20px; margin-bottom: 10px;'>Stocks You're Following</h2>")
+        for stock in stock_summaries:
+            stock_symbol, stock_details = stock.split(":", 1)
+            html_parts.append(f"""
+                <div style='margin-bottom: 22px; padding-bottom: 6px; border-bottom: 1px solid #eee;'>
+                    <div style='font-size: 15px; color: #333;'>
+                        <p style='font-size: 20px; font-weight: bold; margin: 0 0 2px; color: #111;'>{stock_symbol.strip()}</p>
+                        {convert_markdown_to_html(stock_details.strip())}
+                    </div>
+                </div>
+            """)
+    else:
+        html_parts.append("<p style='color: #777;'>(No updates for your tracked stocks today.)</p>")
+
+    html_parts.append("<hr style='margin: 30px 0;'>")
+    html_parts.append("""
+        <p style='font-size: 12px; color: #777;'>
+            <strong>Contact Us:</strong><br>
+            Email: <a href='mailto:newsletter@mrktpulseai.com' style='color: #009933;'>newsletter@mrktpulseai.com</a><br>
+            Website: <a href='https://mrktpulseai.com' target='_blank' style='color: #009933;'>mrktpulseai.com</a>
+        </p>
+        <p style='font-size: 12px; color: #777;'>
+            <strong>Disclaimer:</strong> This newsletter is for informational purposes only and does not constitute financial advice.
+        </p>
+    """)
+
+    html_parts.extend(["</td></tr>", "</table>", "</td></tr>", "</table>", "</body>", "</html>"])
+
+    return "\n".join(html_parts)
+
+
+def convert_markdown_to_html(text):
+    """
+    Enhanced Markdown to HTML conversion for use in the newsletter.
+    - Handles headings, lists, bold, paragraphs
+    - Prevents wrapping <h1> in <p>
+    """
+
+    def format_heading(match):
+        heading_text = match.group(1).strip()
+
+        return (
+            f"<h2 style=\""
+            f"font-size: 17px;"
+            f"font-weight: 600;"
+            f"color: #1a1a1a;"
+            f"border-bottom: 2px solid #e0e0e0;"
+            f"padding-bottom: 6px;"
+            f"margin: 35px 0 15px;"
+            f"letter-spacing: 0.5px;"
+            f"text-transform: none;"
+            f"\">{heading_text}</h2>"
+        )
+
+    # ✅ Headings
+    text = re.sub(r'^### (.*?)$', format_heading, text, flags=re.MULTILINE)
     
-    # Convert headings (e.g., ### Heading -> <h3>Heading</h3>)
-    md_text = re.sub(r'### (.*?)\n', r'<h3>\1</h3>\n', md_text)
-    md_text = re.sub(r'## (.*?)\n', r'<h2>\1</h2>\n', md_text)
-    md_text = re.sub(r'# (.*?)\n', r'<h1>\1</h1>\n', md_text)
+    # ✅ Bold
+    text = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', text)
 
-    # Convert newlines into <p> (for paragraphs) and <br> (for line breaks)
-    md_text = md_text.strip()
+    # ✅ Lists
+    list_items = re.findall(r'(?m)^\* (.+)$', text)
+    if list_items:
+        list_html = ''.join(f'<li>{item}</li>' for item in list_items)
+        text = re.sub(r'(?m)^\* .+$', '', text)
+        text += f"<ul style='margin: 10px 0 20px 20px; padding-left: 10px;'>{list_html}</ul>"
 
-    # Replace newlines that should create new paragraphs
-    md_text = re.sub(r'(\n\s*\n)', r'</p><p>', md_text)  # Multiple newlines -> separate paragraphs
-    md_text = f"<p>{md_text}</p>"  # Wrap the entire content in <p> tags to ensure it's a paragraph
+    # ✅ Split into paragraphs safely (but don't wrap <h1>, <ul>, etc)
+    lines = [line.strip() for line in text.strip().split('\n') if line.strip()]
+    html_parts = []
+    for line in lines:
+        if line.startswith("<h1") or line.startswith("<ul") or line.startswith("<li") or line.startswith("</ul"):
+            html_parts.append(line)
+        else:
+            html_parts.append(f"<p style='line-height: 1.6; font-size: 16px; color: #333;'>{line}</p>")
 
-    # Convert bold text (e.g., **bold** -> <strong>bold</strong>)
-    md_text = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', md_text)
-
-    # Convert lists (e.g., - item -> <ul><li>item</li></ul>)
-    md_text = re.sub(r'^\* (.*?)\n', r'<ul><li>\1</li></ul>', md_text, flags=re.M)
-    md_text = re.sub(r'\n\* (.*?)\n', r'<ul><li>\1</li></ul>', md_text, flags=re.M)
-
-    # Convert single newlines to <br> for line breaks within paragraphs
-    md_text = re.sub(r'(\n)', r'<br>', md_text)  # Replace all remaining newlines with <br>
-
-    disclaimer_html = """
-    <p><small><strong>Disclaimer:</strong> The information provided in this newsletter is for informational purposes only and does not constitute financial, investment, or trading advice. Please consult with a qualified financial advisor before making any investment decisions.</small></p>
-    """
-
-    # Add inline styles to control margins and padding, and ensure fixed width
-    md_text = f"""
-    <html>
-        <body style="margin: 0; padding: 0; font-family: Arial, sans-serif;">
-            <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
-                <tr>
-                    <td align="center">
-                        <table role="presentation" width="600" cellspacing="0" cellpadding="20" style="border: 1px solid #ccc; background-color: #fff; margin: 0 auto;">
-                            <tr>
-                                <td style="font-size: 16px; line-height: 1.5; color: #222;">
-                                    {md_text}
-                                     <br>                               <!-- Signature Section -->
-                                    <p style="text-align: left; font-size: 12px; color: #777; margin-top: 30px;">
-                                        <strong>Contact Us:</strong><br>
-                                        Email: <a href="mailto:newsletter@mrktpulseai.com" style="color: #00ff00;">newsletter@mrktpulseai.com</a><br>
-                                        Website: <a href="https://mrktpulseai.com" target="_blank" style="color: #00ff00;">mrktpulseai.com</a>
-                                    </p>
-                                    <br>
-                                    {disclaimer_html}  <!-- Add the disclaimer at the bottom -->
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-            </table>
-        </body>
-    </html>
-    """
-    return md_text 
-
-
-def format_market_summary(gpt_response):
-    # Convert Markdown GPT response to HTML
-    formatted_summary = markdown_to_html(gpt_response)
-    return formatted_summary
+    return "\n".join(html_parts)

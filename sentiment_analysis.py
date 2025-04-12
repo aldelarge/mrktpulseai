@@ -38,12 +38,19 @@ def analyze_daily_sentiment_gpt(headlines, indices, sector_summary):
     **Date & Time:** {formatted_time}  
     **Market Status:** {market_status}  
 
-    Below are key stock market updates, economic data, and major indices. Provide a **detailed market summary** that synthesizes key movements, trends, and themes today. Focus on identifying **major catalysts** and **emerging patterns** that investors should be aware of, with **actionable insights**.
+    Below are key stock market headlines, economic data, and index movements. Your job is to deliver a **concise and insightful market recap** for investors. Identify what mattered most today, what changed, and where attention should go next.
 
-    ### Key Guidelines:
-    - **Use Data from Headlines and Descriptions**: Focus on the exact details mentioned in both the headlines and descriptions, such as percentage movements, earnings figures, or geopolitical events. Avoid overstatements unless the data is explicit.
-    - **Be Cautious with Speculation**: Ensure analysis is **fact-based**. Avoid speculating on future trends without clear data backing.
-    - **Multifaceted Sentiment Analysis**: Assess sentiment from **news articles**, **market performance**, and if applicable, **social media** or earnings calls. Ensure conclusions align with real-time data.
+    Write in a sharp, professional tone. Avoid filler. Prioritize signal over noise. Highlight clear moves, reactions, and strategic takeaways — not just summaries.
+
+    ---
+
+    ### Core Instructions:
+    - **Be brief, not shallow**: Short paragraphs with punchy insights. No wasted words.
+    - **Use the data**: Headlines, descriptions, price % changes, and sector moves should drive your analysis.
+    - **Don’t speculate**: All conclusions must be grounded in reported facts and clear patterns.
+    - **Each section = unique insight**: Avoid restating themes between sections.
+
+    ---
 
     Updates:
     {market_analysis_text}
@@ -54,42 +61,37 @@ def analyze_daily_sentiment_gpt(headlines, indices, sector_summary):
     Sector Performance:  
     {sector_summary}
 
-    Follow this template for the Market Summary, ensuring clear and distinct sections for each part:
+    ---
 
-   ### Market Summary:
-    Provide a **holistic synthesis** of today’s market activity using **headlines**, **descriptions**, **economic data**, **sector performance**, and **sentiment**. Identify **emerging patterns** and compare today’s data with **historical trends** or **long-term economic factors**. **Ensure the response avoids unnecessary repetition** and each section provides unique insights.
+    ### Market Summary:
+    Outline the big picture. What defined today’s market — macro, sentiment, or sector moves? Keep it sharp and avoid repeating details from other sections. Point out **macro signals** or **unusual behavior**.
 
-    - Look for **hidden correlations** across sectors. Are there any **unexpected reactions** to headlines or descriptions (e.g., a **positive earnings report** causing a sector rally)?
-    - Identify **macro events** and explain their impact on current market trends. Don’t repeat similar concepts in different sections.
+    ---
 
     ### Key Movements and Trends:
-    Highlight the **most significant market movements** today, such as sector shifts or **major price changes**. Provide **distinct analysis** of these movements, comparing them to **long-term trends** or **short-term fluctuations**, without rehashing the same ideas.
+    Highlight what **actually moved** today — sectors, large caps, unexpected winners or laggards. Look for **rotations**, **momentum reversals**, or **sector divergence**.
 
-    - Analyze **sector rotations** or **emerging trends** (e.g., tech, energy, consumer goods) in a way that **avoids overlap** with other sections.
-    - Discuss trends based on **real data** (earnings, price movements, sector performance) and **historical context**.
-    - Be specific: If a stock increased by 1%, note the exact figure, and avoid vague descriptions like "strong performance."
+    ---
 
     ### Major Catalysts:
-    Identify key **catalysts** affecting the market today, including **economic reports**, **corporate earnings**, **geopolitical events**, or changes in **market sentiment**. Focus on **data-backed catalysts** with measurable impacts. Ensure that each catalyst is discussed **without repetition** from previous sections.
+    List major catalysts (earnings, economic data, geopolitical events). Focus on what changed market behavior — not just what happened.
 
-    - Provide **context** for each catalyst (e.g., earnings performance or market response).
-    - For **geopolitical events** or **economic reports**, explain their short-term effect on **investor sentiment**.
+    ---
 
     ### Sector Performance:
-    Summarize **sector performance**, noting **outperforming** or **underperforming** sectors. Look for signs of **sector rotation** or **opportunities** based on **data-backed analysis**.
+    Quickly scan the board — who led, who lagged, and why? Identify any **tradeable themes** or **early signals** in sectors that stood out.
 
-    - Example: **Did the energy sector outperform due to higher oil prices?**
-    - Provide **insight into sector sentiment** and how **investors can capitalize** on shifts, especially in **underperforming sectors**.
+    ---
 
-    ### Overall Market Sentiment:
-    Analyze **market sentiment** (Bullish, Bearish, or Neutral) and explain the reasons behind the shift. Assess any **contradictions** between sectors and broader market movements, ensuring each section feels unique.
+    ### Market Sentiment:
+    What's the tone? Bullish, bearish, or cautious? Use market behavior, VIX, volume, and sector flow to assess emotional context. Don’t rehash data — focus on interpretation.
 
-    - Example: **Is tech positive but other sectors cautious due to geopolitical concerns or inflation fears?**
+    ---
 
     ### Conclusion:
-    Provide **key takeaways** and actionable insights for investors, highlighting **unique opportunities** or strategies, supported by **data-backed analysis** and **risk assessments**. Focus on **actionable strategies** and avoid restating points already covered.
+    End with 2–3 **sharp takeaways** or forward-looking thoughts. Avoid fluff or summaries. Think like a strategist: what should readers watch next, or consider doing?
+    """
 
-    """ 
     print(prompt)
     tokens = tokenizer.encode(prompt)
     num_tokens = len(tokens)

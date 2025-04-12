@@ -1,0 +1,77 @@
+{% block styles %}
+<style>
+    .snapshot {
+      max-height: 12em;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 5; /* show approx. 5 lines */
+      -webkit-box-orient: vertical;
+      text-overflow: ellipsis;
+      text-align: left;
+    }
+  
+    .snapshot p {
+      color: white !important; /* you forgot the # */
+    }
+    .text-glow-green {
+        /* color: #00ff00 !important; */
+        text-shadow: 0 0 12px rgba(0, 255, 0, 0.5);
+    }
+    .text-soft-glow {
+    color: #adb1bb;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.08);
+    }
+
+    .text-purple-soft-glow {
+    color: #a78bfa;
+    text-shadow: 0 0 4px rgba(167, 139, 250, 0.12);
+    }
+  </style>
+{% endblock %}
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="overlay_blur py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10 text-center text-white">
+                <h2 class="text-glow-green mb-4">About Us</h1>
+
+                <p class="lead text-soft-glow">
+                <strong>mrktpulseAI</strong> is an AI-powered market intelligence newsletter, designed to cut through the noise and deliver exactly what matters — before it hits the headlines.
+                </p>
+
+                <hr class="divider3 my-4">
+
+                <h4 class="text-glow mb-3">Our Philosophy</h4>
+                <p class="text-soft-glow">
+                    Great trades don’t come from endless scrolling — they come from clarity. That’s why we filter noise, rank importance, and surface only what’s worth your time. We believe in precision over volume.
+                </p>
+
+                <hr class="divider3 my-4">
+
+                <h4 class="text-glow mb-3">Why It Matters</h4>
+                <p class="text-soft-glow">
+                    In markets, timing is everything. We built mrktpulseAI to give you a real-time edge — not yesterday’s news. 
+                    Our system adapts as fast as the market does — no clutter, no delays.
+                </p>
+
+                <hr class="divider3 my-4">
+
+                <h4 class="text-glow mb-3">Built Different</h4>
+                <p class="text-soft-glow">
+                    Whether you're a retail trader or a busy professional, mrktpulseAI was built to adapt to your flow — not interrupt it. Read it in two minutes, use it all day.
+                </p>
+                <hr class="divider3 my-5">
+                <p class="text-glow text-center fs-6">
+                    Smarter signals. Zero noise.
+                </p>
+                <a href="{{ url_for('routes.signup') }}" class="btn btn-success btn-sm mt-2">
+                    Join the Pulse &rarr;
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

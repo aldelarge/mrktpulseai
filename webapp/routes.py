@@ -1,13 +1,13 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, jsonify
+from flask import Blueprint, render_template, redirect, url_for, flash, jsonify, current_app
 from flask_login import login_user, login_required, current_user
 from flask_login import logout_user
-from .models import User
+from .models import User, StockNews, StockData, UserSavedStock
 from . import db, bcrypt
 from .forms import SignUpForm, LoginForm, ResetPasswordForm, ForgotPasswordForm
 import stripe
 from flask import request
 from config import Config  # Use relative import to access config from the root folder
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from werkzeug.security import generate_password_hash
 from sendgrid.helpers.mail import Mail, Email, To, Content
 import sendgrid
@@ -15,9 +15,8 @@ import string
 import random
 from . import sg
 import secrets  # For better cryptographic token generation
-
-
-
+from markdown import convert_markdown_to_html
+import re
 
 
 routes = Blueprint('routes', __name__)
@@ -27,15 +26,88 @@ def landing():
         return redirect(url_for('routes.home'))  # Redirect to home if logged in
     return render_template('landing.html')
 
+@routes.route("/profile")
+@login_required  # Ensures only logged-in users can access the profile page
+def profile():
+    return render_template("profile.html", user=current_user)
+
 @routes.route('/home')
 def home():
     if not current_user.is_authenticated:
         return redirect(url_for('routes.landing'))  # Redirect guests to landing page
+    
+    today = datetime.utcnow().date()
+    strategy_stocks = StockData.query.filter(
+        StockData.category == "strategy",
+        db.func.date(StockData.last_updated) == today
+    ).order_by(StockData.strategy_score.desc()).all()
+    
+    # Group by strategy_label
+    grouped = {}
+    for stock in strategy_stocks:
+        label = stock.strategy_label or "Unlabeled"
+        if label not in grouped:
+            grouped[label] = []
+        grouped[label].append(stock)
+
+    # Trending news first (rankscore is present)
+    trending_news = StockNews.query.filter(StockNews.rankscore.isnot(None))\
+        .order_by(StockNews.rankscore.desc(), StockNews.date_published.desc()).all()
+
+
+    # Stock-specific news (no rankscore)
+    stock_news = StockNews.query.filter(StockNews.rankscore.is_(None))\
+        .order_by(StockNews.date_published.desc()).all() 
+    
+    gainers = StockData.query.filter(StockData.category.contains("gainer")).order_by(StockData.change_percent.desc()).limit(5).all()
+    losers = StockData.query.filter(StockData.category.contains("loser")).order_by(StockData.change_percent).limit(5).all()   
+    market_data = StockData.query.filter_by(category="market").order_by(StockData.change_percent.desc()).limit(10).all()
+    top_traded = StockData.query.filter(StockData.category.contains("top_traded")).order_by(StockData.volume.desc()).all()
+    saved_stocks = UserSavedStock.query.filter_by(user_id=current_user.id).all()
+    stocks_list = [stock.stock_symbol for stock in saved_stocks]
+
+    # Fetch StockData for each saved stock
+    user_stocks_data = {}
+    for symbol in stocks_list:
+        stock_data = StockData.query.filter_by(symbol=symbol).first()
+        if stock_data:
+            # Get latest news (limit 3 per stock)
+            stock_news = StockNews.query.filter_by(symbol=symbol)\
+                .order_by(StockNews.date_published.desc()).limit(10).all()
+
+            user_stocks_data[symbol] = {
+                "price": stock_data.price,
+                "change_percent": stock_data.change_percent,
+                "volume": stock_data.volume,
+                "summary": stock_data.summary_text,
+                "news": stock_news
+            }
+
+   # Stock news dictionary for top-traded stocks
+    stock_news_dict = {}
+    for stock in top_traded:
+        stock_news_dict[stock.symbol] = StockNews.query.filter(
+            StockNews.symbol.ilike(f"%{stock.symbol}%"),  # Match stock symbol
+            StockNews.rankscore.is_(None)  # Exclude trending news
+        ).order_by(StockNews.date_published.desc()).limit(3).all()
 
     user = User.query.filter_by(id=current_user.id).first()
     subscription_status = user.subscription_status  # 'active', 'inactive', or 'canceled'
 
-    return render_template('home.html', user=current_user, subscription_status=subscription_status)
+    return render_template(
+        'home.html',
+        grouped=grouped,
+        stocks_list=stocks_list,
+        user_stocks_data=user_stocks_data,
+        trending_news=trending_news,
+        market_data=market_data,
+        stock_news=stock_news,
+        stock_news_dict=stock_news_dict,
+        gainers=gainers,
+        losers=losers,
+        top_traded=top_traded,
+        user=current_user,
+        subscription_status=subscription_status)
 
 @routes.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -90,6 +162,10 @@ def logout():
     logout_user()  # Log the user out
     flash('You have been logged out.', 'info')  # Optional: Flash a message to the user
     return redirect(url_for('routes.landing'))  # Redirect to the landing page (or wherever you want)
+
+@routes.route("/about")
+def about():
+    return render_template("about.html")
 
 @routes.route('/checkout')
 @login_required  # Make sure only logged-in users can access this page
@@ -328,3 +404,77 @@ def reset_password(token):
         return redirect(url_for('routes.login'))
 
     return render_template('reset_password.html', form=form, token=token)
+
+# Save a stock for the user
+@routes.route("/save_stock", methods=["POST"])
+@login_required
+def save_stock():
+    from webapp.models import db, StockData, UserSavedStock  # ✅ Moved here to prevent import loops
+    from daily_data import get_stock_snapshot  # ✅ Keep this local to avoid loops
+    data = request.get_json()
+    symbol = data.get("symbol", "").upper().strip()
+
+    if not symbol:
+        return jsonify({"error": "Stock symbol is required."}), 400
+
+    # ✅ Fix application context issue
+    with current_app.app_context():
+        stock_entry = StockData.query.filter_by(symbol=symbol).first()
+
+        if not stock_entry:
+            print(f"⚠️ {symbol} not found in StockData. Fetching snapshot...")
+            snapshot = get_stock_snapshot(symbol)
+
+            if not snapshot:
+                return jsonify({"error": f"Stock {symbol} could not be found or fetched."}), 404
+
+            # ✅ Now stock should exist, fetch again
+            stock_entry = StockData.query.filter_by(symbol=symbol).first()
+
+        # ✅ Check if user already saved this stock
+        existing_saved_stock = UserSavedStock.query.filter_by(user_id=current_user.id, stock_symbol=symbol).first()
+        if existing_saved_stock:
+            return jsonify({"message": "Stock already saved."}), 200
+
+        # ✅ Save the stock for the user
+        saved_stock = UserSavedStock(user_id=current_user.id, stock_symbol=symbol, date_added=datetime.now(timezone.utc))
+        db.session.add(saved_stock)
+        db.session.commit()
+
+        print(f"✅ Stock {symbol} saved for user {current_user.id}")
+        return jsonify({"message": f"Stock {symbol} saved successfully."}), 200
+    
+@routes.route("/remove_stock", methods=["POST"])
+@login_required
+def remove_stock():
+    """Allows users to remove a stock from their saved list."""
+    data = request.json
+    stock_symbol = data.get("symbol", "").upper()
+
+    if not stock_symbol:
+        return jsonify({"error": "No stock symbol provided"}), 400
+
+    stock = UserSavedStock.query.filter_by(user_id=current_user.id, stock_symbol=stock_symbol).first()
+    if not stock:
+        return jsonify({"error": "Stock not found in saved list"}), 404
+
+    db.session.delete(stock)
+    db.session.commit()
+
+    return jsonify({"message": f"Stock {stock_symbol} removed successfully"}), 200
+
+@routes.route("/landing_snapshot/<symbol>")
+def landing_snapshot(symbol):
+    stock = StockData.query.filter_by(symbol=symbol.upper()).first()
+    if not stock:
+        return jsonify({"error": "Stock not found"}), 404
+
+    raw_html = convert_markdown_to_html(stock.summary_text or "")
+    stripped_html = re.sub(r'<h[1-6][^>]*>.*?</h[1-6]>', '', raw_html, flags=re.DOTALL)
+
+    return jsonify({
+        "symbol": stock.symbol,
+        "price": f"${stock.price:.2f}",
+        "change_percent": f"{stock.change_percent:+.2f}%",
+        "summary_text": stripped_html.strip()
+    })

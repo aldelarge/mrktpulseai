@@ -1,4 +1,4 @@
-prompt 1.0 - 
+prompt 1.0 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 """
     **Date & Time:** {formatted_time}  
     **Market Status:** {market_status}  
@@ -44,7 +44,7 @@ prompt 1.0 -
      
     """
 
-Prompt 2.0 - 
+Prompt 2.0 - - - - - - - - - - - - - - - - - - - - - - 
 
 **Date & Time:** {formatted_time}  
     **Market Status:** {market_status}  
@@ -96,7 +96,8 @@ Prompt 2.0 -
         Summarize the performance of major indices, including **significant gains or losses**. Mention any key movements within indices (e.g., tech leading, energy lagging). Be cautious in stating the **overall sentiment** and provide context where needed.
     """
 
-get index data 1.0 - 
+get index data 1.0 - - - - - - - - - - - - - - - - - - - - 
+
     def get_index_snapshot():
     snapshots = []
     etf_info = {
@@ -173,7 +174,7 @@ get index data 1.0 -
     return df_snapshots
 
 
-prompt 2.1 -- 
+prompt v2.1 - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     prompt = f"""
     **Date & Time:** {formatted_time}  
@@ -224,7 +225,8 @@ prompt 2.1 --
     
     """
 
-prompt 2.2 -     prompt = f"""
+prompt v2.2 - - - - - - - - - - - - - - - - - - - - - - - - - - -
+prompt = f"""
     **Date & Time:** {formatted_time}  
     **Market Status:** {market_status}  
 
@@ -280,7 +282,90 @@ prompt 2.2 -     prompt = f"""
     - Example: **Consider diversifying into energy stocks, as they appear to be outperforming despite broader market uncertainty.**
     """
 
+prompt v2.3 - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
+    prompt = f"""
+    **Date & Time:** {formatted_time}  
+    **Market Status:** {market_status}  
+
+    Below are key stock market updates, economic data, and major indices. Provide a **detailed market summary** that synthesizes key movements, trends, and themes today. Focus on identifying **major catalysts** and **emerging patterns** that investors should be aware of, with **actionable insights**.
+    - Write in a confident, professional tone — but allow for subtle urgency or conviction when highlighting important signals or shifts in sentiment.
+    ### Key Guidelines:
+    - **Keep it tight**: Use shorter paragraphs and fewer words while maintaining clarity and value.
+    - **Use Data from Headlines and Descriptions**: Focus on the exact details mentioned in both the headlines and descriptions, such as percentage movements, earnings figures, or geopolitical events. Avoid overstatements unless the data is explicit.
+    - **Be Cautious with Speculation**: Ensure analysis is **fact-based**. Avoid speculating on future trends without clear data backing.
+    - **Multifaceted Sentiment Analysis**: Assess sentiment from **news articles**, **market performance**, and if applicable, **social media** or earnings calls. Ensure conclusions align with real-time data.
+
+    Updates:
+    {market_analysis_text}
+
+    Indices:  
+    {indices}
+
+    Sector Performance:  
+    {sector_summary}
+
+    Follow this template for the Market Summary, ensuring clear and distinct sections for each part:
+
+   ### Market Summary:
+    Provide a **holistic synthesis** of today’s market activity using **headlines**, **descriptions**, **economic data**, **sector performance**, and **sentiment**. Identify **emerging patterns** and compare today’s data with **historical trends** or **long-term economic factors**. **Ensure the response avoids unnecessary repetition** and each section provides unique insights.
+
+    - Look for **hidden correlations** across sectors. Are there any **unexpected reactions** to headlines or descriptions (e.g., a **positive earnings report** causing a sector rally)?
+    - Identify **macro events** and explain their impact on current market trends. Don’t repeat similar concepts in different sections.
+
+    ### Key Movements and Trends:
+    Highlight the **most significant market movements** today, such as sector shifts or **major price changes**. Provide **distinct analysis** of these movements, comparing them to **long-term trends** or **short-term fluctuations**, without rehashing the same ideas.
+
+    - Analyze **sector rotations** or **emerging trends** (e.g., tech, energy, consumer goods) in a way that **avoids overlap** with other sections.
+    - Discuss trends based on **real data** (earnings, price movements, sector performance) and **historical context**.
+    - Be specific: If a stock increased by 1%, note the exact figure, and avoid vague descriptions like "strong performance."
+
+    ### Major Catalysts:
+    Identify key **catalysts** affecting the market today, including **economic reports**, **corporate earnings**, **geopolitical events**, or changes in **market sentiment**. Focus on **data-backed catalysts** with measurable impacts. Ensure that each catalyst is discussed **without repetition** from previous sections.
+
+    - Provide **context** for each catalyst (e.g., earnings performance or market response).
+    - For **geopolitical events** or **economic reports**, explain their short-term effect on **investor sentiment**.
+
+    ### Sector Performance:
+    Summarize **sector performance**, noting **outperforming** or **underperforming** sectors. Look for signs of **sector rotation** or **opportunities** based on **data-backed analysis**.
+
+    - Example: **Did the energy sector outperform due to higher oil prices?**
+    - Provide **insight into sector sentiment** and how **investors can capitalize** on shifts, especially in **underperforming sectors**.
+
+    ### Overall Market Sentiment:
+    Analyze **market sentiment** (Bullish, Bearish, or Neutral) and explain the reasons behind the shift. Assess any **contradictions** between sectors and broader market movements, ensuring each section feels unique.
+
+    - Example: **Is tech positive but other sectors cautious due to geopolitical concerns or inflation fears?**
+
+    ### Conclusion:
+    Provide **key takeaways** and actionable insights for investors, highlighting **unique opportunities** or strategies, supported by **data-backed analysis** and **risk assessments**. Focus on **actionable strategies** and avoid restating points already covered.
+    """ 
+
+    user stocks prompt 1.0 - 
+
+    prompt = f"""
+            You are a seasoned financial analyst providing concise, insightful stock updates tailored for beginner to intermediate investors, while still impressing market-savvy readers.
+
+            Analyze {symbol}'s market performance and key developments with a forward-looking perspective:
+
+            - **Price**: ${stock_entry.price:.2f} ({stock_entry.change_percent:.2f}%)
+            - **Volume**: {stock_entry.volume:,}
+            - **Key News**: {combined_text}
+            - **RSI (Relative Strength Index)**: {rsi_value} ({'Oversold, potential rebound' if rsi_value < 30 else 'Overbought, potential pullback' if rsi_value > 70 else 'Neutral, tracking trend'})
+            - **50-day Moving Average**: {ma_50}
+            - **200-day Moving Average**: {ma_200}
+            - **MACD**: Line: {macd_value}, Signal: {signal_line}, Histogram: {histogram}
+            - **Relative Volume (RVOL)**: {rvol} (Ratio vs. average volume — 1.0 = normal, >1 = elevated activity)
+            - **Support / Resistance Levels**: Support near ${support}, Resistance near ${resistance}
+
+            **Summarize with clarity and actionability in 3 short paragraphs:**
+            1. **Trend Check** – What are the technical indicators saying about momentum and trend direction?
+            2. **News Pulse** – Only highlight key headlines that impact sentiment or price. Avoid general fluff.
+            3. **Investor Lens** – What should investors focus on next (volume shifts, trend reversals, breakout zones, etc.)?
+
+            **Make it sharp, strategic, and forward-looking. Avoid overly technical language, but maintain credibility.**
+            """
+            
 def format_etf_data(df_snapshots):
     # Format the ETF data neatly for GPT-4 prompt
     formatted_data = ""

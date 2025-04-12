@@ -209,7 +209,8 @@ def get_news_for_ticker(ticker, limit=5, days_range=10):
                     news_articles.append({
                         'headline': article.get('title', 'No headline available'),
                         'description': article.get('description', 'No description available'),
-                        'url': article.get('url', 'No URL available'),
+                        'url': article.get("article_url", "No URL available"),  # ✅ Extract article_url correctly
+                        'source': article.get("publisher", {}).get("name", "Unknown Source"),
                         'published_date': article.get('published_utc', 'No date available')  # Add the published date
                     })
             except ValueError as e:

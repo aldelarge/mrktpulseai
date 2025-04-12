@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="styled-div p-4 rounded">
+        <h2 class="text-white">Profile Settings</h2>
+        <hr class="divider3">
+        
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        <p><strong>Subscription Status:</strong> {{ user.subscription_status }}</p>
+        <a href="{{ url_for('routes.cancel_subscription') }}" class="btn btn-danger btn-sm w-100">
+            <i class="btn btn-danger"></i> Cancel Subscription
+        </a>
+        <a href="{{ url_for('routes.home') }}" class="btn btn-primary">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

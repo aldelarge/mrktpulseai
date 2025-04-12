@@ -13,3 +13,5 @@ class Config:
     WTF_CSRF_ENABLED = True
     SENDGRID_API_KEY = os.getenv("SENDGRID_API_KEY")
     STRIPE_WEBHOOK_KEY = os.getenv("STRIPE_WEBHOOK_KEY")
+    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+    POLYGON_API_KEY=os.getenv("POLYGON_API_KEY")
