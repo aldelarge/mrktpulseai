@@ -409,16 +409,24 @@ def reset_password(token):
 @routes.route("/save_stock", methods=["POST"])
 @login_required
 def save_stock():
-    from webapp.models import db, StockData, UserSavedStock  # ✅ Moved here to prevent import loops
-    from daily_data import get_stock_snapshot  # ✅ Keep this local to avoid loops
+    from webapp.models import db, StockData, UserSavedStock
+    from daily_data import get_stock_snapshot
     data = request.get_json()
     symbol = data.get("symbol", "").upper().strip()
 
     if not symbol:
-        return jsonify({"error": "Stock symbol is required."}), 400
+        return jsonify({"message": "Stock symbol is required."}), 400
 
-    # ✅ Fix application context issue
     with current_app.app_context():
+        # ✅ Check stock count limit
+        max_stocks_allowed = 5
+        user_stock_count = UserSavedStock.query.filter_by(user_id=current_user.id).count()
+
+        if user_stock_count >= max_stocks_allowed:
+            return jsonify({
+                "message": f"You can only track up to {max_stocks_allowed} stocks. Please remove one before adding more."
+            }), 400
+
         stock_entry = StockData.query.filter_by(symbol=symbol).first()
 
         if not stock_entry:
@@ -426,23 +434,21 @@ def save_stock():
             snapshot = get_stock_snapshot(symbol)
 
             if not snapshot:
-                return jsonify({"error": f"Stock {symbol} could not be found or fetched."}), 404
+                return jsonify({"message": f"Stock {symbol} could not be found or fetched."}), 404
 
-            # ✅ Now stock should exist, fetch again
             stock_entry = StockData.query.filter_by(symbol=symbol).first()
 
-        # ✅ Check if user already saved this stock
         existing_saved_stock = UserSavedStock.query.filter_by(user_id=current_user.id, stock_symbol=symbol).first()
         if existing_saved_stock:
             return jsonify({"message": "Stock already saved."}), 200
 
-        # ✅ Save the stock for the user
         saved_stock = UserSavedStock(user_id=current_user.id, stock_symbol=symbol, date_added=datetime.now(timezone.utc))
         db.session.add(saved_stock)
         db.session.commit()
 
         print(f"✅ Stock {symbol} saved for user {current_user.id}")
         return jsonify({"message": f"Stock {symbol} saved successfully."}), 200
+
     
 @routes.route("/remove_stock", methods=["POST"])
 @login_required
