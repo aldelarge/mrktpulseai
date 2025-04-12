@@ -1,6 +1,11 @@
 {% block styles %}
 <style>
 /* Override Bootstrap container styles ONLY on the home page */
+    .snapshot {
+    color: #f8f9fa !important;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    }
     .base-container {
         width: 100vw !important;
         max-width: 100% !important;
@@ -522,13 +527,92 @@
                 </div> <!-- End of tab-content -->
             </div> <!-- End of col-lg-9 -->
         </div> <!-- End of row -->
-    {% else %}
-        <div class="overlay_blur text-center mt-4">
-            <h4 class="text-white">Your Subscription is Inactive</h4>
-            <p class="text-secondary">Renew to continue receiving market updates.</p>
-            <a href="{{ url_for('routes.create_checkout_session', user_id=current_user.id) }}" class="btn btn-success btn-lg">Renew Subscription</a>
-        </div>
-    {% endif %}
+        {% else %}
+        <div class="overlay_blur p-5 rounded text-center shadow-lg border border-success border-opacity-25">
+            <h2 class="text-glow-green mb-3">This Is Your Market Edge</h2>
+          
+            <p class="lead text-soft-glow mb-4">
+              The market rewards speed, clarity, and conviction. That’s why we built <strong>mrktpulseAI</strong> — a newsletter that delivers 
+              powerful insight with zero noise.
+            </p>
+          
+            <p class="text-soft-glow mb-4">
+              Each edition distills market chaos into clean takeaways: standout trade setups, sharp AI-driven summaries, and movement that matters — all in one place.
+            </p>
+          
+            <p class="text-soft-glow mb-4">
+              The dashboard gives you a glimpse. The newsletter gives you the full signal.
+            </p>
+          
+            <a href="{{ url_for('routes.create_checkout_session', user_id=current_user.id) }}" class="btn btn-success btn-lg mt-2">
+              Unlock Full Access
+            </a>
+          
+            <p class="mt-3 text-muted small">
+              Stay informed. Trade with confidence. Cancel anytime.
+            </p>
+          </div>
+
+
+          <div class="container mt-5">
+            <div class="text-center mb-4">
+                <h3 class="text-glow-green mb-2">See the Pulse of the Market</h3>
+                <p class="text-soft-glow lead mb-0">
+                Our AI breaks down the signal behind the noise — here’s a sample of the real insights subscribers receive daily.
+                </p>
+            </div>
+
+            <div class="row g-4">
+                <!-- NVDA Card -->
+                <div class="col-md-6">
+                <div class="p-4 rounded-4 shadow-sm border border-success border-opacity-25 bg-dark bg-opacity-50">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="text-success fw-bold mb-0" id="snapshot-nvda-symbol">Loading...</h5>
+                    <p class="text-light mb-0 small" id="snapshot-nvda-price">...</p>
+                    </div>
+                    <hr class="my-2" style="border-color: rgba(255,255,255,0.15);">
+                    <div id="snapshot-nvda-summary" class="pt-2">
+                    <p class="small" style="color: #e0e0e0 !important;">Fetching analysis...</p>
+                    </div>
+                </div>
+                </div>
+                <!-- AAPL Card -->
+                <div class="col-md-6">
+                <div class="p-4 rounded-4 shadow-sm border border-success border-opacity-25 bg-dark bg-opacity-50">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="text-success fw-bold mb-0" id="snapshot-aapl-symbol">Loading...</h5>
+                    <p class="text-light mb-0 small" id="snapshot-aapl-price">...</p>
+                    </div>
+                    <hr class="my-2" style="border-color: rgba(255,255,255,0.15);">
+                    <div id="snapshot-aapl-summary" class="pt-2">
+                    <p class="small" style="color: #e0e0e0 !important;">Fetching analysis...</p>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div>
+
+          <div class="styled-div p-4 rounded shadow-sm border border-warning border-opacity-25 mt-4">
+            <h4 class="text-warning mb-3"><i class="fas fa-bolt me-2"></i>Today’s Market Movers</h4>
+            <ul class="list-unstyled small">
+              {% for news in trending_news[:3] %}
+                <li class="mb-3">
+                  <strong class="text-light">{{ news.headline }}</strong><br>
+                  <span class="text-muted">{{ news.description[:120] }}...</span>
+                  <a href="{{ news.url }}" target="_blank" class="text-info ms-1">Read more</a>
+                </li>
+              {% endfor %}
+            </ul>
+            <p class="text-muted text-center mt-2">
+              <em>Get deeper breakdowns and trade impact in our daily newsletter.</em>
+            </p>
+          </div>
+          <div class="styled-div p-4 rounded text-center border border-primary border-opacity-25 mt-5">
+            <h4 class="text-glow mb-2">Smart money reads before the market opens.</h4>
+            <p class="text-soft-glow">Subscribers get the edge with AI-powered market clarity — delivered daily.</p>
+            <a href="{{ url_for('routes.create_checkout_session', user_id=current_user.id) }}" class="btn btn-primary mt-2">Subscribe Now</a>
+          </div>
+        {% endif %}
 </div> <!-- End of styled-div overlay_blur -->
 </div> <!-- End of container full-width-container -->
             
@@ -649,6 +733,45 @@
                     });
                 });
             </script>
-            
+
+
+<!--SNAPSHOT JS-->
+            <script>
+            function fetchSnapshot(symbol, prefix) {
+                fetch(`/landing_snapshot/${symbol}`)
+                    .then(res => res.json())
+                    .then(data => {
+                    const priceHtml = `${data.price} <span class="${data.change_percent.startsWith('+') ? 'text-success' : 'text-danger'}">(${data.change_percent})</span>`;
+                    document.getElementById(`${prefix}-symbol`).innerText = `${data.symbol} Snapshot`;
+                    document.getElementById(`${prefix}-price`).innerHTML = priceHtml;
+
+                    const summaryText = truncateWords(data.summary_text, 150);  // 🧠 Adjust word limit as needed
+                    const summaryDiv = document.getElementById(`${prefix}-summary`);
+                    summaryDiv.innerHTML = `<div class="snapshot">${summaryText}</div>`;
+
+                    // ✅ Force style override to fix markdown-injected CSS
+                    const injectedTags = summaryDiv.querySelectorAll('*');
+                    injectedTags.forEach(tag => {
+                        tag.style.color = '#f8f9fa';
+                        tag.style.fontSize = '0.9rem';
+                        tag.style.lineHeight = '1.5';
+                    });
+                    })
+                    .catch(error => {
+                    document.getElementById(`${prefix}-summary`).innerHTML = `<p class="text-danger small">⚠️ Failed to load snapshot.</p>`;
+                    console.error(`Snapshot error for ${symbol}:`, error);
+                    });
+                }
+
+            // ✅ Helper to cut after N words
+            function truncateWords(str, wordLimit) {
+                const words = str.split(' ');
+                if (words.length <= wordLimit) return str;
+                return words.slice(0, wordLimit).join(' ') + '...';
+            }
+            // Call it like this:
+            fetchSnapshot("AAPL", "snapshot-aapl");
+            fetchSnapshot("NVDA", "snapshot-nvda");
+            </script>
             {% endblock %}
             

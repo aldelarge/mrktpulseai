@@ -114,7 +114,7 @@ def signup():
     form = SignUpForm()
 
     if form.validate_on_submit():
-        email = form.email.data
+        email = form.email.data.lower().strip()
 
         # Check if the email already exists in the database
         existing_user = User.query.filter_by(email=email).first()
@@ -147,7 +147,8 @@ def signup():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
+        email = form.email.data.lower().strip()  # ✅ Normalize email
+        user = User.query.filter_by(email=email).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user)
             flash('Logged in successfully!', 'success')

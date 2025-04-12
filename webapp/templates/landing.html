@@ -1,14 +1,13 @@
 {% block styles %}
 <style>
     .snapshot {
-      max-height: 12em;
-      overflow: hidden;
-      display: -webkit-box;
-      -webkit-line-clamp: 5; /* show approx. 5 lines */
-      -webkit-box-orient: vertical;
-      text-overflow: ellipsis;
-      text-align: left;
+        position: relative;
+        text-align: left;
+        color: #f8f9fa;
+        font-size: 0.95rem;
+        line-height: 1.5;
     }
+    
   
     .snapshot p {
       color: white !important; /* you forgot the # */
@@ -88,7 +87,7 @@
                             </div>
                         </div>
                     </div>
-                
+                    
                     <!-- NVDA Snapshot -->
                     <div class="col-md-6">
                         <div class="overlay_blur2 p-4 rounded-4 h-100">
@@ -119,9 +118,9 @@
                             Add your tickers and get clear, custom breakdowns delivered daily — no fluff, no noise, just the data that actually moves stocks.
                         </p>
                 
-                        <a href="{{ url_for('routes.signup') }}" class="btn btn-primary btn-lg">
+                        <a href="{{ url_for('routes.signup') }}" class="btn btn-primary w-100 d-md-inline-block d-block" style="max-width: 280px;">
                             Unlock My AI Snapshot
-                        </a>
+                        </a>                        
                     </div>
                 </div>
         
@@ -279,21 +278,41 @@
             fetch(`/landing_snapshot/${symbol}`)
                 .then(res => res.json())
                 .then(data => {
-                    const priceHtml = `${data.price} <span class="${data.change_percent.startsWith('+') ? 'text-success' : 'text-danger'}">(${data.change_percent})</span>`;
-        
-                    document.getElementById(`${prefix}-symbol`).innerText = `${data.symbol} Snapshot`;
-                    document.getElementById(`${prefix}-price`).innerHTML = priceHtml;
-        
-                    const summaryDiv = document.getElementById(`${prefix}-summary`);
-                    summaryDiv.innerHTML = `<div class="snapshot">${data.summary_text}</div>`;
+                const priceHtml = `${data.price} <span class="${data.change_percent.startsWith('+') ? 'text-success' : 'text-danger'}">(${data.change_percent})</span>`;
+                document.getElementById(`${prefix}-symbol`).innerText = `${data.symbol} Snapshot`;
+                document.getElementById(`${prefix}-price`).innerHTML = priceHtml;
+
+                const summaryText = truncateMiddle(data.summary_text, 100, 65); // starts 100 words in, shows 50 words
+                const summaryDiv = document.getElementById(`${prefix}-summary`);
+                summaryDiv.innerHTML = `<div class="snapshot">${summaryText}</div>`;
+
+
+                // ✅ Force style override to fix markdown-injected CSS
+                const injectedTags = summaryDiv.querySelectorAll('*');
+                injectedTags.forEach(tag => {
+                    tag.style.color = '#f8f9fa';
+                    tag.style.fontSize = '0.9rem';
+                    tag.style.lineHeight = '1.5';
+                });
                 })
                 .catch(error => {
-                    document.getElementById(`${prefix}-summary`).innerHTML = `<p class="text-danger small">⚠️ Failed to load snapshot.</p>`;
-                    console.error(`Snapshot error for ${symbol}:`, error);
+                document.getElementById(`${prefix}-summary`).innerHTML = `<p class="text-danger small">⚠️ Failed to load snapshot.</p>`;
+                console.error(`Snapshot error for ${symbol}:`, error);
                 });
+            }
+
+        // ✅ Helper to cut after N words
+            function truncateMiddle(str, startWord = 100, wordLimit = 50) {
+            const words = str.split(' ');
+
+            // If it's too short, just return from the beginning
+            if (words.length <= startWord + wordLimit) {
+                return words.slice(0, wordLimit).join(' ') + '...';
+            }
+
+            return '... ' + words.slice(startWord, startWord + wordLimit).join(' ') + ' ...';
         }
-        
-        // ✅ Load both AAPL and NVDA with separate containers
+        // Call it like this:
         fetchSnapshot("AAPL", "snapshot-aapl");
         fetchSnapshot("NVDA", "snapshot-nvda");
         </script>
