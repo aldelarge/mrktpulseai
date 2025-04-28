@@ -773,5 +773,16 @@
             fetchSnapshot("AAPL", "snapshot-aapl");
             fetchSnapshot("NVDA", "snapshot-nvda");
             </script>
+
+            {% if new_signup %}
+            <script>
+              twq('track','CompleteRegistration', {
+                value: 9.99,
+                currency: 'USD',
+                contents: 'Newsletter Subscription'
+              });
+            </script>
+            {% endif %}
+
             {% endblock %}
             

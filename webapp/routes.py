@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, jsonify, current_app
+from flask import Blueprint, render_template, redirect, url_for, flash, jsonify, current_app, session
 from flask_login import login_user, login_required, current_user
 from flask_login import logout_user
 from .models import User, StockNews, StockData, UserSavedStock
@@ -36,6 +36,9 @@ def home():
     if not current_user.is_authenticated:
         return redirect(url_for('routes.landing'))  # Redirect guests to landing page
     
+     # ✅ Pull and clear the session flag for a new paid user
+    new_signup = session.pop('new_signup', False)
+
     today = datetime.utcnow().date()
     strategy_stocks = StockData.query.filter(
         StockData.category == "strategy",
@@ -107,7 +110,8 @@ def home():
         losers=losers,
         top_traded=top_traded,
         user=current_user,
-        subscription_status=subscription_status)
+        subscription_status=subscription_status,
+        new_signup=new_signup)
 
 @routes.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -131,7 +135,8 @@ def signup():
         # Log the user in automatically after signup
         login_user(user)
         flash('You have been logged in automatically after signing up!', 'success')
-
+        print(f"🆕 New signup: {email}")
+        
         # Get the next parameter if it exists
         next_page = request.args.get('next')
         if next_page:
@@ -235,6 +240,9 @@ def success():
 
     # Flash success message
     flash('Payment successful! Your subscription is now active.', 'success')
+
+    # Set a session flag to track new signup
+    session['new_signup'] = True
 
     return redirect(url_for('routes.home'))
 
