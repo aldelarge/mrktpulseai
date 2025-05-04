@@ -3,20 +3,22 @@ from flask_login import login_user, login_required, current_user
 from flask_login import logout_user
 from .models import User, StockNews, StockData, UserSavedStock
 from . import db, bcrypt
-from .forms import SignUpForm, LoginForm, ResetPasswordForm, ForgotPasswordForm
+from .forms import SignUpForm, LoginForm, ResetPasswordForm, ForgotPasswordForm, ContactForm
 import stripe
-from flask import request
+from flask import request, session
 from config import Config  # Use relative import to access config from the root folder
 from datetime import datetime, timedelta, timezone
 from werkzeug.security import generate_password_hash
 from sendgrid.helpers.mail import Mail, Email, To, Content
 import sendgrid
+from flask_mail import Message
 import string
 import random
-from . import sg
+from . import sg, mail
 import secrets  # For better cryptographic token generation
 from markdown import convert_markdown_to_html
 import re
+import time
 
 
 routes = Blueprint('routes', __name__)
@@ -136,7 +138,7 @@ def signup():
         login_user(user)
         flash('You have been logged in automatically after signing up!', 'success')
         print(f"🆕 New signup: {email}")
-        
+
         # Get the next parameter if it exists
         next_page = request.args.get('next')
         if next_page:
@@ -493,3 +495,37 @@ def landing_snapshot(symbol):
         "change_percent": f"{stock.change_percent:+.2f}%",
         "summary_text": stripped_html.strip()
     })
+
+@routes.route('/contact', methods=['GET', 'POST'])
+def contact():
+    form = ContactForm()
+
+    if request.method == 'POST':
+        cooldown = 60 * 5  # 5 minutes
+        last_sent = session.get('last_contact_time')
+
+        if last_sent and time.time() - last_sent < cooldown:
+            flash("Please wait a few minutes before sending another message.", "warning")
+            return render_template('contact.html', form=form)
+
+        if form.validate_on_submit():
+            user_email = form.email.data
+            subject = form.subject.data
+            message = form.message.data
+            full_subject = f"[Contact Form] {subject}"
+            body = f"From: {user_email}\n\n{message}"
+
+            msg = Message(
+                subject=full_subject,
+                sender="newsletter@mrktpulseai.com",
+                recipients=["newsletter@mrktpulseai.com"],
+                body=body,
+                reply_to=user_email
+            )
+            mail.send(msg)
+
+            session['last_contact_time'] = time.time()
+            flash("Thanks for your message! We'll get back to you soon.", "success")
+            return redirect(url_for('routes.contact'))
+
+    return render_template('contact.html', form=form)

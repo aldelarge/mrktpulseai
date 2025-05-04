@@ -7,6 +7,9 @@ from config import Config
 import sendgrid
 from sendgrid.helpers.mail import Mail, Email, To, Content
 import os 
+from flask_mail import Mail
+
+mail = Mail()
 
 # Initialize the extensions
 db = SQLAlchemy()
@@ -60,5 +63,13 @@ def create_app():
 
     app.jinja_env.filters['comma_format'] = comma_format
 
+    app.config['MAIL_SERVER'] = 'smtp.sendgrid.net'
+    app.config['MAIL_PORT'] = 587
+    app.config['MAIL_USE_TLS'] = True
+    app.config['MAIL_USERNAME'] = 'apikey'
+    app.config['MAIL_PASSWORD'] = os.getenv("SENDGRID_API_KEY")
+    app.config['MAIL_DEFAULT_SENDER'] = 'newsletter@mrktpulseai.com'
+
+    mail.init_app(app)
 
     return app

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5 overlay_blur text-glow">
+    <h2 class="mb-3">Contact Us</h2>
+
+    <p class="mb-2">
+        Have a question, ran into an issue, or want to suggest a new feature? We're always improving <strong>MRKTPULSEAI</strong> and love hearing from you.
+    </p>
+    <p class="mb-4">
+        Every message is read carefully. Your feedback directly shapes the platform.
+    </p>
+
+    <form method="POST">
+        {{ form.hidden_tag() }}
+
+        <div class="mb-3">
+            {{ form.email.label(class="form-label") }}
+            {{ form.email(class="form-control", placeholder="you@example.com") }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.subject.label(class="form-label") }}
+            {{ form.subject(class="form-control", placeholder="Subject") }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.message.label(class="form-label") }}
+            {{ form.message(class="form-control", rows=5, placeholder="Type your message here...") }}
+        </div>
+
+        <div class="text-end">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+
+    <p class="mt-4 mb-0" style="font-size: 13px; color: #999;">
+        Thank you for helping us build the smartest stock analysis platform on the planet.
+    </p>
+</div>
+{% endblock %}
