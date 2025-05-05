@@ -33,8 +33,14 @@ def format_market_summary(market_summary, stock_summaries=None):
                 </div>
             """)
     else:
-        html_parts.append("<p style='color: #777;'>(No updates for your tracked stocks today.)</p>")
-
+        html_parts.append(
+            "<p style='color: #777;'>"
+            "No stock updates today.<br><br>"
+            "Want personalized AI analysis?<br>"
+            "Log in at <a href='https://mrktpulseai.com' style='color: #007bff;'>mrktpulseai.com</a> to follow the stocks you care about.<br>"
+            "Your newsletter will automatically include tailored insights based on your portfolio."
+            "</p>"
+        )
     html_parts.append("<hr style='margin: 30px 0;'>")
     html_parts.append("""
         <p style='font-size: 12px; color: #777;'>

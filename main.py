@@ -163,7 +163,7 @@ async def main():
         print("Sending personalized emails....")
 
         for user in users:
-            if user.subscription_status != "active":
+            if user.subscription_status not in ["active", "free"]:
                 continue
 
             # ✅ Fetch user's tracked stocks

@@ -612,6 +612,31 @@
             <p class="text-soft-glow">Subscribers get the edge with AI-powered market clarity — delivered daily.</p>
             <a href="{{ url_for('routes.create_checkout_session', user_id=current_user.id) }}" class="btn btn-primary mt-2">Subscribe Now</a>
           </div>
+          {% if current_user.subscription_status == 'free' %}
+            <div class="text-center mt-4">
+            <form action="{{ url_for('routes.cancel_subscription') }}" method="POST">
+                <button type="submit" class="btn btn-outline-danger btn-sm">
+                Stop Daily Emails
+                </button>
+                <p class="text-muted small mt-2">
+                You’ll still have dashboard access. You can resubscribe anytime.
+                </p>
+            </form>
+            </div>
+            {% endif %}
+            {% if current_user.subscription_status == 'inactive' %}
+            <div class="text-center mt-4">
+              <p class="text-muted small mb-2">
+                You’ve unsubscribed from daily emails.
+              </p>
+              <p class="text-soft-glow mb-3">
+                To resume access, upgrade to the full version — includes customizable stock insights, technical signals, and daily AI-powered analysis.
+              </p>
+              <a href="{{ url_for('routes.create_checkout_session', user_id=current_user.id) }}" class="btn btn-outline-success btn-sm">
+                Upgrade & Rejoin
+              </a>
+            </div>
+            {% endif %}
         {% endif %}
 </div> <!-- End of styled-div overlay_blur -->
 </div> <!-- End of container full-width-container -->

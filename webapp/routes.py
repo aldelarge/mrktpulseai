@@ -121,32 +121,33 @@ def signup():
 
     if form.validate_on_submit():
         email = form.email.data.lower().strip()
-
+        plan = request.form.get('plan') or 'paid'
+        print(f"📩 Plan received from form: {plan}")
+        
         # Check if the email already exists in the database
         existing_user = User.query.filter_by(email=email).first()
         if existing_user:
             flash('Email already exists! Please log in.', 'info')
-            return redirect(url_for('routes.login'))  # Redirect to login if the user is already signed up
+            return redirect(url_for('routes.login'))
         
-        # Create a new user
+        # Create a new user with appropriate subscription status
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(email=email, password=hashed_password)
+        subscription_status = 'free'
+
+        user = User(email=email, password=hashed_password, subscription_status=subscription_status)
         db.session.add(user)
         db.session.commit()
 
-        # Log the user in automatically after signup
         login_user(user)
         flash('You have been logged in automatically after signing up!', 'success')
-        print(f"🆕 New signup: {email}")
+        print(f"🆕 New signup: {email} | Plan selected: {plan} | Status set: {subscription_status}") 
 
-        # Get the next parameter if it exists
-        next_page = request.args.get('next')
-        if next_page:
-            return redirect(next_page)  # Redirect to the next page (e.g., the success page)
-        
+        # Optional: redirect to Stripe for paid users only
+        if plan == 'paid':
+            return redirect(url_for('routes.create_checkout_session', user_id=user.id))
 
-        # After creating the user, we initiate the checkout session
-        return redirect(url_for('routes.create_checkout_session', user_id=user.id))
+        # Otherwise, go to dashboard directly
+        return redirect(url_for('routes.home'))
 
     return render_template('signup.html', form=form)
 
@@ -262,6 +263,14 @@ def cancel_subscription():
     user = User.query.filter_by(id=current_user.id).first()
 
     if request.method == 'POST':
+        
+        if user.subscription_status == 'free':
+            user.subscription_status = 'inactive'
+            db.session.commit()
+            flash("You've been unsubscribed from daily emails.", 'info')
+            return redirect(url_for('routes.home'))
+
+
         # Check if the user has a stripe_customer_id (this ID identifies the customer in Stripe)
         if user.stripe_customer_id:  # Ensure user has a stripe_customer_id
             try:

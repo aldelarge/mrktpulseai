@@ -3,12 +3,18 @@
 {% block content %}
     <br>
     <div class="signup-container overlay_blur">
-    <!-- Friendly Header & Payment Notice -->
-    <h2 class="text-center">You're Almost There!</h2>
+
+    <!-- Updated Header & Plan Explanation -->
+    <h2 class="text-center">AI Market Intel, Built for You</h2>
+
     <p class="text-center text-muted">
-        Get instant access to AI-powered stock insights that keep you ahead of the market.  
-        Complete your sign-up, and you'll be redirected to the payment page.
+        Pick your plan below.
     </p>
+    
+    <div class="text-muted text-center mb-3">
+        <p><strong>Full Access:</strong> A personalized daily newsletter built around the stocks you follow. Backed by AI. Packed with insights. Designed to help you act — not react.</p>
+        <p><strong>Free Plan:</strong> A clean market recap delivered daily. Great for staying in the loop, but not tailored to you.</p>
+    </div>
 
     <form method="POST">
         {{ form.hidden_tag() }}
@@ -35,16 +41,30 @@
             {{ form.confirm_password(class="form-control") }}
         </div>
 
-        <button type="submit" class="btn btn-primary">Sign Up</button>
+        <!-- Plan Selector -->
+        <div class="mb-4 text-center">
+            <label class="form-label d-block mb-2">Choose Your Plan</label>
+            <div class="btn-group w-100" role="group" aria-label="Plan selection">
+                <input type="radio" class="btn-check" name="plan" value="paid" id="plan-paid" autocomplete="off" checked>
+                <label class="btn btn-outline-success" for="plan-paid">Full Access</label>
+
+                <input type="radio" class="btn-check" name="plan" value="free" id="plan-free" autocomplete="off">
+                <label class="btn btn-outline-secondary" for="plan-free">Free Plan</label>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">Sign Up</button>
+        </div>
+        <!-- Payment Info -->
         <p class="text-muted text-center mt-3">
-            You’ll be redirected to the payment page after signing up.  
-            Your subscription will be activated once payment is confirmed.
+            Select <strong>Full Access</strong> to continue to the payment page after signup.
         </p>
-            <!-- Trust Badge -->
+
+        <!-- Trust Badge -->
         <div class="text-center mt-4">
             <i class="fas fa-lock text-success"></i>  
-            <small class="text-muted">  Access starts at <strong>$9.99/month</strong>. Cancel anytime.
-            </small>
+            <small class="text-muted">Access starts at <strong>$9.99/month</strong>. Cancel anytime.</small>
         </div>
     </form>
     </div>

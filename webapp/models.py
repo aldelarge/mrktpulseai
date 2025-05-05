@@ -10,7 +10,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
     stripe_customer_id = db.Column(db.String(255), unique=True)  # Store Stripe customer ID
-    subscription_status = db.Column(db.String(50), default='inactive')  # 'active', 'inactive', etc.
+    subscription_status = db.Column(db.String(50), default='inactive')  # 'active', 'free', 'inactive'
 
     reset_token = db.Column(db.String(255), nullable=True)  # Field to store reset token
     reset_token_expiration = db.Column(db.DateTime, nullable=True)  # Field to store expiration time
