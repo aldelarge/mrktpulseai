@@ -528,116 +528,101 @@
             </div> <!-- End of col-lg-9 -->
         </div> <!-- End of row -->
         {% else %}
-        <div class="overlay_blur p-5 rounded text-center shadow-lg border border-success border-opacity-25">
-            <h2 class="text-glow-green mb-3">This Is Your Market Edge</h2>
-          
-            <p class="lead text-soft-glow mb-4">
-              The market rewards speed, clarity, and conviction. That’s why we built <strong>mrktpulseAI</strong> — a newsletter that delivers 
-              powerful insight with zero noise.
-            </p>
-          
-            <p class="text-soft-glow mb-4">
-              Each edition distills market chaos into clean takeaways: standout trade setups, sharp AI-driven summaries, and movement that matters — all in one place.
-            </p>
-          
-            <p class="text-soft-glow mb-4">
-              The dashboard gives you a glimpse. The newsletter gives you the full signal.
-            </p>
-          
-            <a href="{{ url_for('routes.create_checkout_session', user_id=current_user.id) }}" class="btn btn-success btn-lg mt-2">
-              Unlock Full Access
-            </a>
-          
-            <p class="mt-3 text-muted small">
-              Stay informed. Trade with confidence. Cancel anytime.
-            </p>
-          </div>
+<div class="overlay_blur p-5 rounded text-center shadow-lg border border-success border-opacity-25">
+  <h2 class="text-glow-green mb-3">You’ve Got a Foot in the Door</h2>
 
+  <p class="lead text-soft-glow mb-3">
+    You’re receiving the free market recap — but your stocks aren’t being watched.
+  </p>
 
-          <div class="container mt-5">
-            <div class="text-center mb-4">
-                <h3 class="text-glow-green mb-2">See the Pulse of the Market</h3>
-                <p class="text-soft-glow lead mb-0">
-                Our AI breaks down the signal behind the noise — here’s a sample of the real insights subscribers receive daily.
-                </p>
-            </div>
+  <p class="text-soft-glow mb-3">
+    Upgrade to unlock personalized stock tracking, AI-generated trade setups, and market alerts tailored to your portfolio.
+  </p>
 
-            <div class="row g-4">
-                <!-- NVDA Card -->
-                <div class="col-md-6">
-                <div class="p-4 rounded-4 shadow-sm border border-success border-opacity-25 bg-dark bg-opacity-50">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                    <h5 class="text-success fw-bold mb-0" id="snapshot-nvda-symbol">Loading...</h5>
-                    <p class="text-light mb-0 small" id="snapshot-nvda-price">...</p>
-                    </div>
-                    <hr class="my-2" style="border-color: rgba(255,255,255,0.15);">
-                    <div id="snapshot-nvda-summary" class="pt-2">
-                    <p class="small" style="color: #e0e0e0 !important;">Fetching analysis...</p>
-                    </div>
-                </div>
-                </div>
-                <!-- AAPL Card -->
-                <div class="col-md-6">
-                <div class="p-4 rounded-4 shadow-sm border border-success border-opacity-25 bg-dark bg-opacity-50">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                    <h5 class="text-success fw-bold mb-0" id="snapshot-aapl-symbol">Loading...</h5>
-                    <p class="text-light mb-0 small" id="snapshot-aapl-price">...</p>
-                    </div>
-                    <hr class="my-2" style="border-color: rgba(255,255,255,0.15);">
-                    <div id="snapshot-aapl-summary" class="pt-2">
-                    <p class="small" style="color: #e0e0e0 !important;">Fetching analysis...</p>
-                    </div>
-                </div>
-                </div>
-            </div>
-            </div>
+  <a href="{{ url_for('routes.create_checkout_session', user_id=current_user.id) }}" class="btn btn-success btn-lg mt-2 px-4">
+    Upgrade to Full Access
+  </a>
 
-          <div class="styled-div p-4 rounded shadow-sm border border-warning border-opacity-25 mt-4">
-            <h4 class="text-warning mb-3"><i class="fas fa-bolt me-2"></i>Today’s Market Movers</h4>
-            <ul class="list-unstyled small">
-              {% for news in trending_news[:3] %}
-                <li class="mb-3">
-                  <strong class="text-light">{{ news.headline }}</strong><br>
-                  <span class="text-muted">{{ news.description[:120] }}...</span>
-                  <a href="{{ news.url }}" target="_blank" class="text-info ms-1">Read more</a>
-                </li>
-              {% endfor %}
-            </ul>
-            <p class="text-muted text-center mt-2">
-              <em>Get deeper breakdowns and trade impact in our daily newsletter.</em>
-            </p>
-          </div>
-          <div class="styled-div p-4 rounded text-center border border-primary border-opacity-25 mt-5">
-            <h4 class="text-glow mb-2">Smart money reads before the market opens.</h4>
-            <p class="text-soft-glow">Subscribers get the edge with AI-powered market clarity — delivered daily.</p>
-            <a href="{{ url_for('routes.create_checkout_session', user_id=current_user.id) }}" class="btn btn-primary mt-2">Subscribe Now</a>
-          </div>
-          {% if current_user.subscription_status == 'free' %}
-            <div class="text-center mt-4">
-            <form action="{{ url_for('routes.cancel_subscription') }}" method="POST">
-                <button type="submit" class="btn btn-outline-danger btn-sm">
-                Stop Daily Emails
-                </button>
-                <p class="text-muted small mt-2">
-                You’ll still have dashboard access. You can resubscribe anytime.
-                </p>
-            </form>
-            </div>
-            {% endif %}
-            {% if current_user.subscription_status == 'inactive' %}
-            <div class="text-center mt-4">
-              <p class="text-muted small mb-2">
-                You’ve unsubscribed from daily emails.
-              </p>
-              <p class="text-soft-glow mb-3">
-                To resume access, upgrade to the full version — includes customizable stock insights, technical signals, and daily AI-powered analysis.
-              </p>
-              <a href="{{ url_for('routes.create_checkout_session', user_id=current_user.id) }}" class="btn btn-outline-success btn-sm">
-                Upgrade & Rejoin
-              </a>
-            </div>
-            {% endif %}
-        {% endif %}
+  {% if current_user.subscription_status == 'free' %}
+  <form action="{{ url_for('routes.cancel_subscription') }}" method="POST" class="mt-3">
+    <button type="submit" class="btn btn-outline-danger btn-sm">Stop Free Emails</button>
+    <p class="text-muted small mt-1">Still have dashboard access. Resubscribe anytime.</p>
+  </form>
+  {% endif %}
+
+  {% if current_user.subscription_status == 'inactive' %}
+  <p class="text-muted small mt-4">
+    You’ve unsubscribed from daily emails. To resume, upgrade to unlock full AI summaries and alerts.
+  </p>
+  <a href="{{ url_for('routes.create_checkout_session', user_id=current_user.id) }}" class="btn btn-outline-success btn-sm">
+    Upgrade & Rejoin
+  </a>
+  {% endif %}
+</div>
+
+<!-- Section: Sample Insights -->
+<div class="container mt-5">
+  <div class="text-center mb-4">
+    <h3 class="text-glow-green mb-2">Real Insights. Real Edge.</h3>
+    <p class="text-soft-glow lead mb-0">
+      These samples are from real subscriber reports, powered by our AI system — tuned to their watchlists.
+    </p>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-md-6">
+      <div class="p-4 rounded-4 shadow-sm border border-success border-opacity-25 bg-dark bg-opacity-50">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h5 class="text-success fw-bold mb-0" id="snapshot-nvda-symbol">Loading...</h5>
+          <p class="text-light mb-0 small" id="snapshot-nvda-price">...</p>
+        </div>
+        <hr class="my-2" style="border-color: rgba(255,255,255,0.15);">
+        <div id="snapshot-nvda-summary" class="pt-2">
+          <p class="small" style="color: #e0e0e0 !important;">Fetching analysis...</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="p-4 rounded-4 shadow-sm border border-success border-opacity-25 bg-dark bg-opacity-50">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h5 class="text-success fw-bold mb-0" id="snapshot-aapl-symbol">Loading...</h5>
+          <p class="text-light mb-0 small" id="snapshot-aapl-price">...</p>
+        </div>
+        <hr class="my-2" style="border-color: rgba(255,255,255,0.15);">
+        <div id="snapshot-aapl-summary" class="pt-2">
+          <p class="small" style="color: #e0e0e0 !important;">Fetching analysis...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Section: Market Movers -->
+<div class="styled-div p-4 rounded shadow-sm border border-warning border-opacity-25 mt-4">
+  <h4 class="text-warning mb-3"><i class="fas fa-bolt me-2"></i>Today’s Market Movers</h4>
+  <ul class="list-unstyled small">
+    {% for news in trending_news[:3] %}
+    <li class="mb-3">
+      <strong class="text-light">{{ news.headline }}</strong><br>
+      <span class="text-muted">{{ news.description[:120] }}...</span>
+      <a href="{{ news.url }}" target="_blank" class="text-info ms-1">Read more</a>
+    </li>
+    {% endfor %}
+  </ul>
+  <p class="text-muted text-center mt-2">
+    <em>Subscribers get deeper breakdowns — and actionable context.</em>
+  </p>
+</div>
+
+<!-- Section: Final CTA -->
+<div class="styled-div p-4 rounded text-center border border-primary border-opacity-25 mt-5">
+  <h4 class="text-glow mb-2">AI That Works For *Your* Portfolio</h4>
+  <p class="text-soft-glow">
+    You're seeing the surface. Upgrade to track your stocks, get daily AI summaries, and spot high-confidence trade setups automatically.
+  </p>
+  <a href="{{ url_for('routes.create_checkout_session', user_id=current_user.id) }}" class="btn btn-primary mt-2 px-4">Go Pro</a>
+</div>
+{% endif %}
 </div> <!-- End of styled-div overlay_blur -->
 </div> <!-- End of container full-width-container -->
             
@@ -800,14 +785,15 @@
             </script>
 
             {% if new_signup %}
-            <script>
-              twq('track','CompleteRegistration', {
-                value: 9.99,
-                currency: 'USD',
-                contents: 'Newsletter Subscription'
-              });
+            <script type="text/javascript">
+            twq('event', 'tw-plqcu-plqcw', {
+                value: "{{ 9.99 if current_user.subscription_status == 'active' else 0 }}",
+                currency: "USD",
+                email_address: "{{ current_user.email }}"
+            });
             </script>
             {% endif %}
+
 
             {% endblock %}
             

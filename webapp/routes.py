@@ -137,7 +137,7 @@ def signup():
         user = User(email=email, password=hashed_password, subscription_status=subscription_status)
         db.session.add(user)
         db.session.commit()
-
+        session['new_signup'] = True
         login_user(user)
         flash('You have been logged in automatically after signing up!', 'success')
         print(f"🆕 New signup: {email} | Plan selected: {plan} | Status set: {subscription_status}") 
@@ -263,7 +263,7 @@ def cancel_subscription():
     user = User.query.filter_by(id=current_user.id).first()
 
     if request.method == 'POST':
-        
+
         if user.subscription_status == 'free':
             user.subscription_status = 'inactive'
             db.session.commit()
