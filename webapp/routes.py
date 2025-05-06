@@ -5,9 +5,9 @@ from .models import User, StockNews, StockData, UserSavedStock
 from . import db, bcrypt
 from .forms import SignUpForm, LoginForm, ResetPasswordForm, ForgotPasswordForm, ContactForm
 import stripe
-from flask import request, session
+from flask import request, session, Response, send_from_directory
 from config import Config  # Use relative import to access config from the root folder
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone, date
 from werkzeug.security import generate_password_hash
 from sendgrid.helpers.mail import Mail, Email, To, Content
 import sendgrid
@@ -19,7 +19,7 @@ import secrets  # For better cryptographic token generation
 from markdown import convert_markdown_to_html
 import re
 import time
-
+import os
 
 routes = Blueprint('routes', __name__)
 @routes.route('/')
@@ -538,3 +538,50 @@ def contact():
             return redirect(url_for('routes.contact'))
 
     return render_template('contact.html', form=form)
+
+@routes.route('/sitemap.xml', methods=['GET'])
+def sitemap():
+    pages = []
+    today = date.today().isoformat()
+
+    excluded_paths = {
+        '/logout',
+        '/cancel',
+        '/success',
+        '/cancel_subscription',
+        '/robots.txt',
+        '/sitemap.xml',
+        '/forgot_password',
+        '/checkout'
+    }
+
+    with current_app.app_context():
+        for rule in current_app.url_map.iter_rules():
+            if (
+                "GET" in rule.methods and 
+                len(rule.arguments) == 0 and 
+                not rule.rule.startswith("/static") and 
+                rule.rule not in excluded_paths
+            ):
+                try:
+                    url = url_for(rule.endpoint, _external=True)
+                    pages.append(f"""
+  <url>
+    <loc>{url}</loc>
+    <lastmod>{today}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>""")
+                except Exception:
+                    continue
+
+    sitemap_xml = f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{''.join(pages)}
+</urlset>"""
+
+    return Response(sitemap_xml, mimetype='application/xml')
+
+@routes.route('/robots.txt')
+def robots():
+    return send_from_directory(os.path.join(os.path.dirname(__file__), '..'), 'robots.txt')
