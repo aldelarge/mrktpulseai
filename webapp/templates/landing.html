@@ -36,17 +36,22 @@
             <!-- Hero Section: AI-powered and Stock Insights -->
             <div class="row justify-content-center text-center hero-section fullpage">
                 <div class="col-md-8">
-                    <h1 class="display-4 text-white hero-title text-glow-green">Outsmart the Market with AI</h1>
-                    <p class="lead text-white hero-description">
-                        Get razor-sharp stock insights powered by AI — personalized, real-time, and delivered after every market close.
-                    </p> 
+                    <h1 class="display-3 fw-bold text-white hero-title text-glow-green">
+                        Every Day You Trade Blind Costs You.
+                      </h1>
+                      
+                      <p class="lead text-white hero-description mt-3">
+                        While you’re watching charts, our AI is scanning <strong>news, momentum, and sentiment</strong> — for <em>your</em> stocks.  
+                        At 4PM, you get a clear, personalized breakdown of what actually mattered. <br>
+                        <strong>Real insight. Zero effort.</strong>
+                    </p>
+                      <a class="btn btn-success btn-lg cta-button mt-4 px-5 py-3 shadow" href="{{ url_for('routes.signup') }}">
+                        Get My Daily AI Recap
+                      </a>
 
-                    <!-- Buttons -->
-                    <div class="cta-buttons">
-                        <a class="btn btn-primary btn-lg cta-button" href="{{ url_for('routes.signup') }}" role="button">Sign Up</a>
-                        <a class="btn btn-light btn-lg cta-button" href="{{ url_for('routes.login') }}" role="button">Log In</a>
-                    </div>
-                    <p class="text-muted mt-3">Get AI-powered stock insights delivered daily. Join now.</p>
+                      <p class="text-muted mt-3">
+                        Tailored to your tickers. GPT-4 powered. Delivered at 4PM sharp.
+                      </p>            
                 </div>
                 
                 <!-- Scroll Arrow -->
