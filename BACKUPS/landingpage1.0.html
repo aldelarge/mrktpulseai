@@ -1,0 +1,324 @@
+{% block styles %}
+<style>
+    .snapshot {
+        position: relative;
+        text-align: left;
+        color: #f8f9fa;
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+    
+  
+    .snapshot p {
+      color: white !important; /* you forgot the # */
+    }
+    .text-glow-green {
+        /* color: #00ff00 !important; */
+        text-shadow: 0 0 12px rgba(0, 255, 0, 0.5);
+    }
+    .text-soft-glow {
+    color: #adb1bb;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.08);
+    }
+
+    .text-purple-soft-glow {
+    color: #a78bfa;
+    text-shadow: 0 0 4px rgba(167, 139, 250, 0.12);
+    }
+  </style>
+{% endblock %}
+
+{% extends "base.html" %}
+
+{% block content %}
+        <div class="container-fluid">
+
+            <!-- Hero Section: AI-powered and Stock Insights -->
+            <div class="row justify-content-center text-center hero-section fullpage">
+                <div class="col-md-8">
+                    <h1 class="display-3 fw-bold text-white hero-title text-glow-green">
+                        Every Day You Trade Blind Costs You.
+                      </h1>
+                      
+                      <p class="lead text-white hero-description mt-3">
+                        While you’re watching charts, our AI is scanning <strong>news, momentum, and sentiment</strong> — for <em>your</em> stocks.  
+                        At 4PM, you get a clear, personalized breakdown of what actually mattered. <br>
+                        <strong>Real insight. Zero effort.</strong>
+                    </p>
+                      <a class="btn btn-success btn-lg cta-button mt-4 px-5 py-3 shadow" href="{{ url_for('routes.signup') }}">
+                        Get My Daily AI Recap
+                      </a>
+
+                      <p class="text-muted mt-3">
+                        Tailored to your tickers. GPT-4 powered. Delivered at 4PM sharp.
+                      </p>            
+                </div>
+                
+                <!-- Scroll Arrow -->
+                <div class="scroll-arrow">
+                    <i class="fas fa-arrow-down"></i>
+                </div>
+            </div>
+        </div>
+        <br>
+        <!-- Enhanced Block: Personalized AI Stock Snapshot -->
+        <div class="container fullpage mt-5">
+            <div class="row justify-content-center">
+            <div class="col-md-12">
+                <div class="styled-div overlay_blur text-center p-5 mb-4 rounded">
+                    <h2 class="text-glow-green"><i>Your Stocks. Our AI. Real Insights.</i></h2>
+                    <p class="lead text-light">
+                    Every weekday at market close, you'll receive a concise, high-signal newsletter powered by
+                    <strong>real-time market data</strong> and <strong>GPT-4 intelligence</strong>.
+                </p>
+                <p class="text-soft-glow">
+                    Not just a recap — your AI co-pilot breaks down market trends <em>and</em> generates
+                    <strong>custom summaries for the stocks you care about most</strong>.
+                    Track tickers, get tailored insights, and stay ahead of the market — all in under 5 minutes.
+                </p>
+                <hr class="divider3">
+        
+                <div class="row g-4 align-items-start mt-4">
+                    <!-- AAPL Snapshot -->
+                    <div class="col-md-6 mb-4 mb-md-0">
+                        <div class="overlay_blur2 p-4 rounded-4 h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="text-success fw-bold mb-0" id="snapshot-aapl-symbol">Loading...</h5>
+                                <p class="text-light mb-0 small" id="snapshot-aapl-price"></p>
+                            </div>
+                            <hr class="my-2" style="border-color: rgba(255,255,255,0.15);">
+                            <div id="snapshot-aapl-summary" class="pt-2">
+                                <p class="text-soft-glow small snapshot">Fetching analysis...</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- NVDA Snapshot -->
+                    <div class="col-md-6">
+                        <div class="overlay_blur2 p-4 rounded-4 h-100">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="text-success fw-bold mb-0" id="snapshot-nvda-symbol">Loading...</h5>
+                                <p class="text-light mb-0 small" id="snapshot-nvda-price"></p>
+                            </div>
+                            <hr class="my-2" style="border-color: rgba(255,255,255,0.15);">
+                            <div id="snapshot-nvda-summary" class="pt-2">
+                                <p class="text-soft-glow small snapshot">Fetching analysis...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+                <!-- CTA Section -->
+                <div class="row justify-content-center mt-5">
+                    <div class="col-md-10 text-center p-5 rounded">
+                        <h3 class="text-white mb-4">
+                            Stop Guessing. Start Acting on Real Signals.
+                        </h2>
+                
+                        <p class="text-light fs-5 mb-3">
+                            This is just a glimpse — real-time AI analysis built from news, technicals, and market sentiment.
+                        </p>
+                
+                        <p class="text-soft-glow mb-6">
+                            Add your tickers and get clear, custom breakdowns delivered daily — no fluff, no noise, just the data that actually moves stocks.
+                        </p>
+                
+                        <a href="{{ url_for('routes.signup') }}" class="btn btn-primary w-100 d-md-inline-block d-block" style="max-width: 280px;">
+                            Unlock My AI Snapshot
+                        </a>                        
+                    </div>
+                </div>
+        
+            </div>
+            </div>
+            </div>
+        </div>
+  
+        <div class="container">
+            <div class="container fullpage">
+                <div class="row justify-content-center text-center">
+                    <div class="col-md-10">
+                        <h2 class="mb-4 text-white text-glow-green"><i>Why Traditional Analysis Isn’t Enough</i></h2>
+                        <p class="lead light-gray-text">
+                            Traditional market analysis is slow. By the time analysts react, the opportunity is gone.  
+                            AI doesn’t wait. It scans, processes, and delivers real-time insights—before the market moves.
+                        </p>
+                    </div>
+                </div>
+            
+                <!-- AI Has No Bias -->
+                <div class="row justify-content-center">
+                    <div class="col-md-10">
+                        <div class="styled-div overlay_blur p-5 mb-1 rounded d-flex flex-md-row flex-column align-items-center text-md-start text-center">
+                            <div class="icon-box me-md-4 mb-3 mb-md-0">
+                                <i class="fas fa-robot fa-3x feature-icon"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-glow-green"><i>No Bias. No Hype. Just Data.</i></h3>
+                                <hr class="divider3 mobile-divider">
+                                <p class="text-soft-glow">
+                                    Human analysts have opinions. AI has facts.  
+                                    Our system tracks <strong>real-time market news, stock movements, and sentiment shifts</strong>—without emotion, without distractions.  
+                                    No opinions. No spin. Just the <strong>signals that actually move stocks.</strong>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Speed & Scale -->
+                <div class="row justify-content-center">
+                    <div class="col-md-10">
+                        <div class="styled-div overlay_blur p-5 mb-1 rounded d-flex flex-md-row flex-column align-items-center text-md-start text-center">
+                            <div class="icon-box me-md-4 mb-3 mb-md-0">
+                                <i class="fas fa-bolt fa-3x feature-icon"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-glow-green"><i>React Faster Than the Market.</i></h3>
+                                <hr class="divider3 mobile-divider">
+                                <p class="text-soft-glow">
+                                    While traditional analysts debate what happened, AI identifies <strong>what’s happening now.</strong>  
+                                    Our system <strong>analyzes thousands of sources, detects critical market trends, and delivers the insights you need—before the market reacts.</strong>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- Designed for Investors -->
+                <div class="row justify-content-center">
+                    <div class="col-md-10">
+                        <div class="styled-div overlay_blur p-5 mb-1 rounded d-flex flex-md-row flex-column align-items-center text-md-start text-center">
+                            <div class="icon-box me-md-4 mb-3 mb-md-0">
+                                <i class="fas fa-eye fa-3x feature-icon"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-glow-green"><i>Designed for Action. Not Clicks.</i></h3>
+                                <hr class="divider3 mobile-divider">
+                                <p class="text-soft-glow">
+                                    Financial media <strong>profits from sensationalism.</strong> We don’t.  
+                                    Our AI system is built to <strong>deliver pure, actionable insights</strong>—not chase engagement.  
+                                    No hype. No distractions. Just the <strong>data-driven intelligence you need to stay ahead.</strong>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+        </div>
+        <br>
+        <!-- How It Works Section: Process Explanation -->
+        <div class="fullpage">
+            <div class="row justify-content-center text-center mt-5">
+                <div class="col-md-10">
+                    <h2 class="mb-4 text-glow-green">
+                        <i>From Data to Decisions — Automatically</i>
+                    </h2>
+                    <p class="">
+                        Our advanced <strong class="text-soft-glow">AI system</strong> processes premium, real-time market data to deliver clear, actionable insights — instantly.
+                    </p>
+                    <p class="text-soft-glow">
+                        By combining <strong class="text-soft-glow">stock performance metrics</strong>, <strong class="text-soft-glow">breaking news</strong>, and <strong class="text-soft-glow">market sentiment</strong>, we detect key trends and patterns from trusted sources. Powered by <strong class="text-soft-glow">GPT-4</strong>, you get the intelligence you need to act fast — and stay ahead.
+                    </p>
+                </div>
+            </div>
+            <br>
+            <!-- Step-by-Step Process Section -->
+            <div class="row text-center">
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card over">
+                        <i class="fas fa-stream fa-4x feature-icon"></i>
+                        <h3 class="border-bottom card_title text-glow-green">Collecting Data</h3>
+                        <p class="text-soft-glow">
+                            We gather real-time, high-quality market data from <strong class="text-soft-glow">premium APIs</strong>, including breaking news, stock performance metrics, and market sentiment from trusted sources. This ensures that you receive the most accurate and up-to-date information available.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card">
+                        <i class="fas fa-cogs fa-4x feature-icon"></i>
+                        <h3 class="border-bottom card_title text-glow-green">AI Processing</h3>
+                        <p class="text-soft-glow">
+                            Our <strong class="text-soft-glow">AI system</strong> analyzes the collected data, filtering out noise and focusing on the key trends and patterns that matter. It combines stock market data with real-time news to generate a comprehensive understanding of market movements.
+                        </p>                    
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card">
+                        <i class="fas fa-lightbulb fa-4x feature-icon"></i>
+                        <h3 class="border-bottom card_title text-glow-green">Actionable Insights</h3>
+                        <p class="text-soft-glow">
+                            After processing the data, our <strong class="text-soft-glow">AI</strong> generates <strong class="text-soft-glow">actionable insights</strong> to help you make informed decisions. Whether it's stock recommendations, trend analysis, or risk assessments, we provide the essential information to stay ahead in the market.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <!-- Call to Action -->
+        <div class="row justify-content-center fullpage">
+            <div class="col-md-6 text-center">
+                <h3 class="text-white"><i>Stay Ahead of the Market</i></h3>
+                <p class="lead light-gray-text">
+                    Every weekday at 4PM, get a concise market recap—so you're always prepared for the next session.
+                </p>
+
+                <div class="styled-div overlay_blur p-4 mb-4 rounded">
+                    <h4 class="text-white">What You Get:</h4>
+                    <ul class="trust-points text-center">
+                        <li><i class="fas fa-check-circle"></i> A data-driven newsletter, delivered daily</li>
+                        <li><i class="fas fa-check-circle"></i> Key takeaways from earnings, trends, and news</li>
+                        <li><i class="fas fa-check-circle"></i> Market insights without the noise</li>
+                    </ul>
+                    <a href="{{ url_for('routes.signup') }}" class="btn btn-primary btn-lg mt-3">Get Instant Access</a>
+                    <p class="text-muted mt-3">Secure checkout • Just $9.99/month • Cancel anytime</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <script>
+        function fetchSnapshot(symbol, prefix) {
+            fetch(`/landing_snapshot/${symbol}`)
+                .then(res => res.json())
+                .then(data => {
+                const priceHtml = `${data.price} <span class="${data.change_percent.startsWith('+') ? 'text-success' : 'text-danger'}">(${data.change_percent})</span>`;
+                document.getElementById(`${prefix}-symbol`).innerText = `${data.symbol} Snapshot`;
+                document.getElementById(`${prefix}-price`).innerHTML = priceHtml;
+
+                const summaryText = truncateMiddle(data.summary_text, 100, 65); // starts 100 words in, shows 50 words
+                const summaryDiv = document.getElementById(`${prefix}-summary`);
+                summaryDiv.innerHTML = `<div class="snapshot">${summaryText}</div>`;
+
+
+                // ✅ Force style override to fix markdown-injected CSS
+                const injectedTags = summaryDiv.querySelectorAll('*');
+                injectedTags.forEach(tag => {
+                    tag.style.color = '#f8f9fa';
+                    tag.style.fontSize = '0.9rem';
+                    tag.style.lineHeight = '1.5';
+                });
+                })
+                .catch(error => {
+                document.getElementById(`${prefix}-summary`).innerHTML = `<p class="text-danger small">⚠️ Failed to load snapshot.</p>`;
+                console.error(`Snapshot error for ${symbol}:`, error);
+                });
+            }
+
+        // ✅ Helper to cut after N words
+            function truncateMiddle(str, startWord = 100, wordLimit = 50) {
+            const words = str.split(' ');
+
+            // If it's too short, just return from the beginning
+            if (words.length <= startWord + wordLimit) {
+                return words.slice(0, wordLimit).join(' ') + '...';
+            }
+
+            return '... ' + words.slice(startWord, startWord + wordLimit).join(' ') + ' ...';
+        }
+        // Call it like this:
+        fetchSnapshot("AAPL", "snapshot-aapl");
+        fetchSnapshot("NVDA", "snapshot-nvda");
+        </script>
+{% endblock %}
