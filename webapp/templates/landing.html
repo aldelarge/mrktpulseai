@@ -25,6 +25,140 @@
     color: #a78bfa;
     text-shadow: 0 0 4px rgba(167, 139, 250, 0.12);
     }
+
+    .chaos-side, .clarity-side {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    padding: 16px;
+    min-height: 100%;
+}
+
+.ticker-row {
+    overflow: hidden;
+    display: flex;
+    white-space: nowrap;
+    position: relative;
+    padding: 5px 0;
+}
+
+.ticker-content {
+    display: inline-flex;
+    gap: 20px;
+    animation: scrollTicker linear infinite;
+}
+
+.ticker-content.clone {
+    position: absolute;
+    left: 100%;
+}
+
+.ticker {
+    padding: 6px 10px;
+    background: rgba(0, 255, 0, 0.1);
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.ticker.red { color: #ff4d4d; }
+.ticker.green { color: #00ff00; }
+.ticker.yellow { color: #ffd700; }
+
+@keyframes scrollTicker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+.clarity-side {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
+
+.clarity-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-grow: 1;
+    background: linear-gradient(135deg, rgba(34, 34, 34, 0.7), rgba(54, 54, 54, 0.7));
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    box-shadow: 0px 10px 30px rgba(0, 255, 0, 0.15);
+    padding: 24px;
+    position: relative;
+}
+
+.insight-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 12px 16px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    transition: background 0.3s, transform 0.3s;
+}
+
+.insight-card:hover {
+    background: rgba(0, 255, 0, 0.1);
+    transform: scale(1.02);
+}
+
+.insight-icon {
+    font-size: 1.5rem;
+    color: #00ff00;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: 50%;
+}
+
+.insight-content {
+    flex-grow: 1;
+}
+
+.insight-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #00ff00;
+    margin-bottom: 4px;
+}
+
+.text-soft-glow {
+    color: #adb1bb;
+    text-shadow: 0px 0px 5px rgba(255, 255, 255, 0.05);
+    font-size: 0.9rem;
+}
+
+/* New Background Pulse for Chaos Side */
+.chaos-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 255, 0, 0.05);
+    z-index: -1;
+    animation: pulseBackground 6s infinite alternate;
+}
+.chaos-footer {
+    margin-top: auto;
+    padding-top: 16px;
+    text-align: center;
+}
+
+.chaos-footer p {
+    font-size: 1.2rem;
+    line-height: 1.2;
+}
+
+@keyframes pulseBackground {
+    0% { opacity: 0.1; }
+    100% { opacity: 0.25; }
+}
+
+
   </style>
 {% endblock %}
 
@@ -61,6 +195,160 @@
                 </div>
             </div>
         </div>
+        <br>
+
+        <div class="container-fluid fullpage mt-4">
+            <div class="row justify-content-center text-center">
+                <div class="col-md-10">
+                    <h2 class="text-glow-green mb-3"><i>From Data Chaos to Clear Signals</i></h2>
+                    <p class="lead text-soft-glow">
+                        AI scans the noise, tracks key signals, and delivers only what matters — all without you lifting a finger.
+                    </p>
+                </div>
+            </div>
+        
+            <div class="row align-items-stretch mt-4">
+                <!-- Chaos Side -->
+                <div class="col-md-6 px-2 chaos-side">
+                    <div class="overlay_blur chaos-container">
+                        <div class="chaos-background"></div> <!-- Background Filler -->
+        
+                        <h3 class="text-glow-green mb-2"><i>Market Chaos</i></h3>
+        
+                        <!-- 10 Rows of Scrolling Data with Different Speeds -->
+                        <div class="ticker-row" data-speed="10">
+                            <div class="ticker-content">
+                                <span class="ticker red">AAPL 176.50 ▼ 1.2%</span>
+                                <span class="ticker green">TSLA 222.00 ▲ 3.5%</span>
+                                <span class="ticker red">OXY 55.00 ▲ 12.0%</span>
+                                <span class="ticker yellow">Fed Rate Hike...</span>
+                            </div>
+                        </div>
+        
+                        <div class="ticker-row" data-speed="8">
+                            <div class="ticker-content">
+                                <span class="ticker green">Tech Rebounds 2%</span>
+                                <span class="ticker red">China Trade Deal Fails...</span>
+                                <span class="ticker yellow">Gold Surges 5%</span>
+                                <span class="ticker red">Recession Fears Grow...</span>
+                            </div>
+                        </div>
+        
+                        <div class="ticker-row" data-speed="12">
+                            <div class="ticker-content">
+                                <span class="ticker green">Oil Spikes Amid Sanctions</span>
+                                <span class="ticker yellow">Earnings Beat...</span>
+                                <span class="ticker red">Market Plunge -2%</span>
+                                <span class="ticker green">Banking Rally...</span>
+                            </div>
+                        </div>
+        
+                        <div class="ticker-row" data-speed="14">
+                            <div class="ticker-content">
+                                <span class="ticker red">Crypto Crash -5%</span>
+                                <span class="ticker yellow">Tech Layoffs Increase...</span>
+                                <span class="ticker green">Energy Surges 4%</span>
+                                <span class="ticker red">S&P Drops 2%</span>
+                            </div>
+                        </div>
+        
+                        <div class="ticker-row" data-speed="7">
+                            <div class="ticker-content">
+                                <span class="ticker yellow">Gold Surges 5%</span>
+                                <span class="ticker red">Recession Fears Grow...</span>
+                                <span class="ticker green">Tech Rebounds 2%</span>
+                                <span class="ticker red">China Trade Deal Fails...</span>
+                            </div>
+                        </div>
+        
+                        <div class="ticker-row" data-speed="9">
+                            <div class="ticker-content">
+                                <span class="ticker green">Big Earnings Day...</span>
+                                <span class="ticker red">Market Volatility...</span>
+                                <span class="ticker yellow">Energy Spike...</span>
+                                <span class="ticker red">Bond Yields Drop...</span>
+                            </div>
+                        </div>
+        
+                        <div class="ticker-row" data-speed="13">
+                            <div class="ticker-content">
+                                <span class="ticker red">Economic Collapse?</span>
+                                <span class="ticker green">Job Data Beats...</span>
+                                <span class="ticker yellow">Oil Dips 2%...</span>
+                                <span class="ticker red">Fed Panic...</span>
+                            </div>
+                        </div>
+        
+                        <div class="ticker-row" data-speed="11">
+                            <div class="ticker-content">
+                                <span class="ticker green">Crypto Rises 10%</span>
+                                <span class="ticker red">Housing Market Drops...</span>
+                                <span class="ticker yellow">Gold Down 2%...</span>
+                                <span class="ticker green">Earnings Surprises...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        
+              <!-- Clarity Side -->
+<div class="col-md-6 px-2 clarity-side">
+    <div class="overlay_blur clarity-container">
+        <h3 class="text-glow-green mb-3"><i>AI Clarity</i></h3>
+
+        <!-- Insight Card 1 - Macroeconomic Outlook -->
+        <div class="insight-card">
+            <div class="insight-icon">
+                <i class="fas fa-chart-bar"></i>
+            </div>
+            <div class="insight-content">
+                <h4 class="insight-title">Jobless Claims Spike</h4>
+                <p class="text-soft-glow">
+                    Unemployment claims hit 241,000, the highest since January. AI signals potential impact on consumer stocks.
+                </p>
+                <span class="text-glow-green">+5% VXX (Volatility Index)</span>
+            </div>
+        </div>
+
+        <!-- Insight Card 2 - TSLA Breakdown Analysis -->
+        <div class="insight-card">
+            <div class="insight-icon">
+                <i class="fas fa-bullseye"></i>
+            </div>
+            <div class="insight-content">
+                <h4 class="insight-title">TSLA Testing Support</h4>
+                <p class="text-soft-glow">
+                    $220 resistance rejected. AI watching for potential pullback to $200.
+                </p>
+                <span class="text-glow-green">-3% since last session</span>
+            </div>
+        </div>
+
+        <!-- Insight Card 4 - Tech vs. Healthcare Divergence -->
+        <div class="insight-card">
+            <div class="insight-icon">
+                <i class="fas fa-exchange-alt"></i>
+            </div>
+            <div class="insight-content">
+                <h4 class="insight-title">Sector Divergence</h4>
+                <p class="text-soft-glow">
+                    Tech gains 1.2% on AI momentum. Healthcare lags, dropping 2.5% as tariff concerns hit consumer spending.
+                </p>
+                <span class="text-glow-green">XLK +1.2% | XLV -2.5%</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+                
+            </div>
+        </div>
+        
         <br>
         <!-- Personalized AI Stock Snapshot -->
         <div class="container fullpage mt-5">
@@ -302,5 +590,34 @@
         // Call it like this:
         fetchSnapshot("AAPL", "snapshot-aapl");
         fetchSnapshot("NVDA", "snapshot-nvda");
+        </script>
+
+        <script>
+document.addEventListener("DOMContentLoaded", () => {
+    const tickerRows = document.querySelectorAll(".ticker-row");
+
+    tickerRows.forEach(row => {
+        const speed = row.getAttribute("data-speed");
+        const content = row.querySelector(".ticker-content");
+
+        // Clone the content for seamless looping
+        const clone = content.cloneNode(true);
+        row.appendChild(clone);
+
+        const contentWidth = content.scrollWidth;
+
+        // Ensure both sets are the same width and set animation duration
+        content.style.width = `${contentWidth}px`;
+        clone.style.width = `${contentWidth}px`;
+
+        content.style.animationDuration = `${speed}s`;
+        clone.style.animationDuration = `${speed}s`;
+
+        // Adjust the animation duration to prevent overlap/glitching
+        content.style.animationTimingFunction = "linear";
+        clone.style.animationTimingFunction = "linear";
+    });
+});
+
         </script>
 {% endblock %}
